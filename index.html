@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>健康知識接接樂</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "PingFang TC", "Noto Sans TC", Arial, sans-serif;
+      background: linear-gradient(180deg, #e7f7ff, #f7fff0);
+      color: #1f2937;
+      text-align: center;
+    }
+    .screen {
+      min-height: 100vh;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .active { display: flex; }
+    h1 { font-size: 40px; margin-bottom: 8px; }
+    h2 { margin-top: 8px; }
+    p { line-height: 1.7; }
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 22px;
+      margin: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      background: #38bdf8;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    button:hover { transform: translateY(-1px); }
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      width: min(850px, 100%);
+      margin-top: 18px;
+    }
+    .topic-btn { background: #22c55e; }
+    #gameScreen {
+      justify-content: flex-start;
+      padding: 12px;
+    }
+    .top-panel {
+      width: min(960px, 100%);
+      background: white;
+      border-radius: 20px;
+      padding: 14px 18px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 10px;
+    }
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 17px;
+    }
+    #questionText {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 10px 0;
+    }
+    #gameArea {
+      position: relative;
+      width: min(960px, 100%);
+      height: 530px;
+      background: linear-gradient(180deg, #dff7ff 0%, #eaffdd 100%);
+      border: 5px solid white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.08), 0 4px 20px rgba(0,0,0,0.12);
+      touch-action: none;
+    }
+    .cloud {
+      position: absolute;
+      background: rgba(255,255,255,0.8);
+      border-radius: 999px;
+      height: 28px;
+      width: 90px;
+    }
+    .cloud::before, .cloud::after {
+      content: "";
+      position: absolute;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+    }
+    .cloud::before { width: 36px; height: 36px; left: 16px; top: -14px; }
+    .cloud::after { width: 46px; height: 46px; left: 40px; top: -20px; }
+    #player {
+      position: absolute;
+      bottom: 10px;
+      left: 410px;
+      width: 120px;
+      height: 125px;
+      transition: left 0.03s linear;
+    }
+    .head {
+      width: 52px;
+      height: 52px;
+      background: #ffd7a8;
+      border-radius: 50%;
+      margin: 0 auto;
+      position: relative;
+      border: 3px solid #7c4a22;
+    }
+    .head::before, .head::after {
+      content: "";
+      position: absolute;
+      top: 22px;
+      width: 6px;
+      height: 6px;
+      background: #111827;
+      border-radius: 50%;
+    }
+    .head::before { left: 14px; }
+    .head::after { right: 14px; }
+    .body {
+      width: 58px;
+      height: 45px;
+      background: #60a5fa;
+      border-radius: 16px 16px 10px 10px;
+      margin: -2px auto 0;
+    }
+    .basket {
+      position: absolute;
+      bottom: 0;
+      left: 12px;
+      width: 96px;
+      height: 38px;
+      border: 6px solid #b45309;
+      border-top: none;
+      border-radius: 0 0 24px 24px;
+      background: rgba(245, 158, 11, 0.35);
+    }
+    .basket::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: -26px;
+      width: 58px;
+      height: 38px;
+      border: 5px solid #b45309;
+      border-bottom: none;
+      border-radius: 50% 50% 0 0;
+    }
+    .item {
+      position: absolute;
+      width: 130px;
+      min-height: 58px;
+      padding: 8px;
+      background: #fff7ed;
+      border: 3px solid #fb923c;
+      border-radius: 18px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    #feedback {
+      width: min(960px, 100%);
+      min-height: 70px;
+      background: white;
+      margin-top: 10px;
+      padding: 12px 16px;
+      border-radius: 18px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+      font-size: 18px;
+      text-align: left;
+    }
+    .correct { color: #16a34a; font-weight: 800; }
+    .wrong { color: #dc2626; font-weight: 800; }
+    .mobile-controls {
+      display: none;
+      margin-top: 8px;
+    }
+    .mobile-controls button {
+      font-size: 24px;
+      padding: 12px 28px;
+      background: #64748b;
+    }
+    @media (max-width: 700px) {
+      h1 { font-size: 32px; }
+      #questionText { font-size: 18px; }
+      #gameArea { height: 470px; }
+      .item { width: 105px; font-size: 13px; }
+      #player { width: 105px; transform: scale(0.9); transform-origin: bottom center; }
+      .mobile-controls { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <section id="homeScreen" class="screen active">
+    <h1>健康知識接接樂</h1>
+    <p>選擇主題，移動人物接住正確答案。<br>接到答案後，系統會告訴你原因，幫助你記住健康知識。</p>
+    <button onclick="showScreen('topicScreen')">開始遊戲</button>
+  </section>
+
+  <section id="topicScreen" class="screen">
+    <h2>請選擇想玩的健康主題</h2>
+    <div class="topic-grid" id="topicGrid"></div>
+    <button onclick="showScreen('homeScreen')">回首頁</button>
+  </section>
+
+  <section id="gameScreen" class="screen">
+    <div class="top-panel">
+      <div class="status-row">
+        <span>主題：<strong id="topicName"></strong></span>
+        <span>題數：<strong id="questionNumber">1</strong> / <strong id="totalQuestion">0</strong></span>
+        <span>分數：<strong id="score">0</strong></span>
+      </div>
+      <div id="questionText">題目載入中……</div>
+    </div>
+
+    <div id="gameArea">
+      <div class="cloud" style="left: 8%; top: 35px;"></div>
+      <div class="cloud" style="left: 70%; top: 70px;"></div>
+      <div id="player">
+        <div class="head"></div>
+        <div class="body"></div>
+        <div class="basket"></div>
+      </div>
+    </div>
+
+    <div id="feedback">使用鍵盤左右鍵移動人物，接住你認為正確的答案。</div>
+    <div class="mobile-controls">
+      <button id="leftBtn">←</button>
+      <button id="rightBtn">→</button>
+    </div>
+    <button onclick="backToTopics()">返回主題選單</button>
+  </section>
+
+  <section id="endScreen" class="screen">
+    <h1>遊戲結束！</h1>
+    <h2 id="finalScore"></h2>
+    <p id="finalComment"></p>
+    <button onclick="restartSameTopic()">再玩一次同主題</button>
+    <button onclick="showScreen('topicScreen')">選擇其他主題</button>
+  </section>
+
+  <script>
+    const questionBank = {
+      "口腔健康": [
+        {
+          question: "想要預防蛀牙，下列哪一個習慣最適合？",
+          options: ["每天刷牙並使用含氟牙膏", "睡前喝含糖飲料", "牙痛才看牙醫", "吃完糖果不用清潔"],
+          answer: "每天刷牙並使用含氟牙膏",
+          reason: "含氟牙膏可以幫助牙齒抵抗酸的侵蝕，搭配規律刷牙能降低蛀牙風險。"
+        },
+        {
+          question: "檳榔對口腔健康最主要的危害之一是什麼？",
+          options: ["增加口腔癌風險", "讓牙齒自然變白", "可以取代刷牙", "讓牙齦更健康"],
+          answer: "增加口腔癌風險",
+          reason: "嚼檳榔會提高口腔黏膜受傷與病變風險，也與口腔癌風險增加有關。"
+        }
+      ],
+      "飲食": [
+        {
+          question: "下列哪一種飲食方式比較健康？",
+          options: ["每天吃多樣化食物", "只吃炸物", "完全不喝水", "用手搖飲代替正餐"],
+          answer: "每天吃多樣化食物",
+          reason: "多樣化飲食能幫助身體獲得不同營養素，維持生長與日常活動所需。"
+        },
+        {
+          question: "想減少糖分攝取，下列哪個選擇比較好？",
+          options: ["白開水", "全糖珍珠奶茶", "含糖汽水", "每天喝能量飲料"],
+          answer: "白開水",
+          reason: "白開水不含糖，是日常補充水分最簡單也最健康的選擇。"
+        }
+      ],
+      "睡眠": [
+        {
+          question: "想提升睡眠品質，睡前比較適合做什麼？",
+          options: ["放下手機並放鬆", "狂滑短影音", "喝很多咖啡", "睡前劇烈運動"],
+          answer: "放下手機並放鬆",
+          reason: "睡前減少螢幕刺激，並建立放鬆習慣，有助於身體進入睡眠狀態。"
+        },
+        {
+          question: "長期睡眠不足可能會造成什麼影響？",
+          options: ["注意力變差", "記憶力一定變超強", "完全不影響健康", "身體永遠不會累"],
+          answer: "注意力變差",
+          reason: "睡眠不足會影響專注力、情緒與學習表現，也可能影響身體健康。"
+        }
+      ],
+      "健康體位": [
+        {
+          question: "BMI主要是用來初步評估什麼？",
+          options: ["體位狀態", "視力好壞", "牙齒數量", "血型種類"],
+          answer: "體位狀態",
+          reason: "BMI是由身高與體重計算出的指標，可作為初步評估體位的參考。"
+        },
+        {
+          question: "想維持健康體位，下列哪個做法較適合？",
+          options: ["規律活動與均衡飲食", "完全不吃晚餐", "只喝含糖飲料", "整天久坐不動"],
+          answer: "規律活動與均衡飲食",
+          reason: "健康體位需要長期生活習慣支持，包含足夠活動、均衡飲食與充足睡眠。"
+        }
+      ],
+      "傳染病": [
+        {
+          question: "預防傳染病，最基本的好習慣之一是什麼？",
+          options: ["正確洗手", "共用餐具", "生病也不休息", "打噴嚏不遮掩"],
+          answer: "正確洗手",
+          reason: "正確洗手可以減少病原體透過手部接觸進入口鼻眼的機會。"
+        },
+        {
+          question: "咳嗽或打噴嚏時，比較適合怎麼做？",
+          options: ["用衛生紙或手肘遮住口鼻", "對著別人咳嗽", "不用清潔雙手", "故意靠近人群"],
+          answer: "用衛生紙或手肘遮住口鼻",
+          reason: "遮住口鼻可以減少飛沫擴散，是保護自己與他人的基本禮貌。"
+        }
+      ],
+      "日常保健預防": [
+        {
+          question: "日常保健最重要的觀念是什麼？",
+          options: ["平時就建立健康習慣", "生病才開始注意", "完全不運動", "只靠保健食品"],
+          answer: "平時就建立健康習慣",
+          reason: "預防勝於治療，平時養成健康習慣可以降低許多健康風險。"
+        },
+        {
+          question: "下列哪一項屬於日常保健行為？",
+          options: ["定期健康檢查", "熬夜到天亮", "不喝水", "每天久坐十小時"],
+          answer: "定期健康檢查",
+          reason: "定期檢查可以幫助早期發現健康問題，並及早調整生活方式。"
+        }
+      ]
+    };
+
+    const topicGrid = document.getElementById("topicGrid");
+    const gameArea = document.getElementById("gameArea");
+    const player = document.getElementById("player");
+    const feedback = document.getElementById("feedback");
+
+    let currentTopic = "";
+    let currentQuestions = [];
+    let questionIndex = 0;
+    let score = 0;
+    let playerX = 410;
+    let moveLeft = false;
+    let moveRight = false;
+    let items = [];
+    let gameLoopId = null;
+    let itemSpeed = 2.2;
+    let locked = false;
+
+    Object.keys(questionBank).forEach(topic => {
+      const btn = document.createElement("button");
+      btn.className = "topic-btn";
+      btn.textContent = topic;
+      btn.onclick = () => startGame(topic);
+      topicGrid.appendChild(btn);
+    });
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    function startGame(topic) {
+      currentTopic = topic;
+      currentQuestions = [...questionBank[topic]];
+      questionIndex = 0;
+      score = 0;
+      document.getElementById("topicName").textContent = topic;
+      document.getElementById("totalQuestion").textContent = currentQuestions.length;
+      document.getElementById("score").textContent = score;
+      showScreen("gameScreen");
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      clearItems();
+      locked = false;
+      itemSpeed = 2.2 + questionIndex * 0.3;
+      const q = currentQuestions[questionIndex];
+      document.getElementById("questionNumber").textContent = questionIndex + 1;
+      document.getElementById("questionText").textContent = q.question;
+      feedback.innerHTML = "移動人物，接住你認為正確的答案。";
+      createItems(q.options, q.answer);
+      startLoop();
+    }
+
+    function createItems(options, answer) {
+      const shuffled = [...options].sort(() => Math.random() - 0.5);
+      const areaWidth = gameArea.clientWidth;
+      const positions = [0.08, 0.32, 0.56, 0.78].map(p => p * areaWidth);
+
+      shuffled.forEach((text, i) => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.textContent = text;
+        div.dataset.correct = text === answer ? "true" : "false";
+        div.style.left = Math.min(positions[i], areaWidth - 140) + "px";
+        div.style.top = (-80 - Math.random() * 90) + "px";
+        gameArea.appendChild(div);
+        items.push(div);
+      });
+    }
+
+    function startLoop() {
+      cancelAnimationFrame(gameLoopId);
+      gameLoop();
+    }
+
+    function gameLoop() {
+      if (!document.getElementById("gameScreen").classList.contains("active")) return;
+
+      movePlayer();
+      moveItems();
+      checkCollision();
+
+      gameLoopId = requestAnimationFrame(gameLoop);
+    }
+
+    function movePlayer() {
+      const areaWidth = gameArea.clientWidth;
+      const playerWidth = player.offsetWidth;
+      if (moveLeft) playerX -= 6;
+      if (moveRight) playerX += 6;
+      playerX = Math.max(0, Math.min(areaWidth - playerWidth, playerX));
+      player.style.left = playerX + "px";
+    }
+
+    function moveItems() {
+      items.forEach(item => {
+        const top = parseFloat(item.style.top);
+        item.style.top = (top + itemSpeed) + "px";
+      });
+
+      const allMissed = items.every(item => parseFloat(item.style.top) > gameArea.clientHeight + 30);
+      if (allMissed && !locked) {
+        locked = true;
+        showResult(false, "沒有接到答案", "這題沒有接到任何選項，可以再看一次題目，判斷哪個選項最符合健康原則。＂");
+      }
+    }
+
+    function checkCollision() {
+      if (locked) return;
+      const playerRect = player.getBoundingClientRect();
+      const basketRect = {
+        left: playerRect.left + 10,
+        right: playerRect.right - 10,
+        top: playerRect.bottom - 44,
+        bottom: playerRect.bottom
+      };
+
+      for (const item of items) {
+        const itemRect = item.getBoundingClientRect();
+        const isHit = !(
+          itemRect.right < basketRect.left ||
+          itemRect.left > basketRect.right ||
+          itemRect.bottom < basketRect.top ||
+          itemRect.top > basketRect.bottom
+        );
+
+        if (isHit) {
+          locked = true;
+          const q = currentQuestions[questionIndex];
+          const correct = item.dataset.correct === "true";
+          if (correct) score += 10;
+          showResult(correct, item.textContent, q.reason);
+          break;
+        }
+      }
+    }
+
+    function showResult(correct, chosenText, reason) {
+      cancelAnimationFrame(gameLoopId);
+      document.getElementById("score").textContent = score;
+      feedback.innerHTML = correct
+        ? `<span class="correct">答對了！</span>你接到：「${chosenText}」。<br>${reason}`
+        : `<span class="wrong">答錯了。</span>你接到：「${chosenText}」。<br>${reason}`;
+
+      setTimeout(() => {
+        questionIndex++;
+        if (questionIndex < currentQuestions.length) {
+          loadQuestion();
+        } else {
+          endGame();
+        }
+      }, 2600);
+    }
+
+    function endGame() {
+      clearItems();
+      showScreen("endScreen");
+      document.getElementById("finalScore").textContent = `你的分數：${score} / ${currentQuestions.length * 10}`;
+      const percent = score / (currentQuestions.length * 10);
+      document.getElementById("finalComment").textContent = percent >= 0.8
+        ? "太棒了！你已經掌握不少健康知識。"
+        : percent >= 0.5
+          ? "不錯喔！再複習原因說明，會更有印象。"
+          : "沒關係，健康知識可以透過遊戲慢慢累積。";
+    }
+
+    function clearItems() {
+      items.forEach(item => item.remove());
+      items = [];
+    }
+
+    function restartSameTopic() {
+      startGame(currentTopic);
+    }
+
+    function backToTopics() {
+      cancelAnimationFrame(gameLoopId);
+      clearItems();
+      showScreen("topicScreen");
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowLeft") moveLeft = true;
+      if (e.key === "ArrowRight") moveRight = true;
+    });
+
+    document.addEventListener("keyup", e => {
+      if (e.key === "ArrowLeft") moveLeft = false;
+      if (e.key === "ArrowRight") moveRight = false;
+    });
+
+    function bindHoldButton(buttonId, direction) {
+      const btn = document.getElementById(buttonId);
+      const start = () => direction === "left" ? moveLeft = true : moveRight = true;
+      const stop = () => direction === "left" ? moveLeft = false : moveRight = false;
+      btn.addEventListener("mousedown", start);
+      btn.addEventListener("mouseup", stop);
+      btn.addEventListener("mouseleave", stop);
+      btn.addEventListener("touchstart", e => { e.preventDefault(); start(); });
+      btn.addEventListener("touchend", stop);
+    }
+
+    bindHoldButton("leftBtn", "left");
+    bindHoldButton("rightBtn", "right");
+
+    window.addEventListener("resize", () => {
+      const areaWidth = gameArea.clientWidth;
+      playerX = Math.min(playerX, areaWidth - player.offsetWidth);
+      player.style.left = playerX + "px";
+    });
+  </script>
+</body>
+</html>
