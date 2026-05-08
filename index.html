@@ -3,551 +3,1108 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>健康知識接接樂</title>
+  <title>健康知識迷宮挑戰</title>
   <style>
     * { box-sizing: border-box; }
-    body {
+    html, body {
       margin: 0;
-      font-family: "PingFang TC", "Noto Sans TC", Arial, sans-serif;
-      background: linear-gradient(180deg, #e7f7ff, #f7fff0);
-      color: #1f2937;
-      text-align: center;
-    }
-    .screen {
-      min-height: 100vh;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .active { display: flex; }
-    h1 { font-size: 40px; margin-bottom: 8px; }
-    h2 { margin-top: 8px; }
-    p { line-height: 1.7; }
-    button {
-      border: none;
-      border-radius: 14px;
-      padding: 12px 22px;
-      margin: 8px;
-      font-size: 18px;
-      cursor: pointer;
-      background: #38bdf8;
-      color: white;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    }
-    button:hover { transform: translateY(-1px); }
-    .topic-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-      width: min(850px, 100%);
-      margin-top: 18px;
-    }
-    .topic-btn { background: #22c55e; }
-    #gameScreen {
-      justify-content: flex-start;
-      padding: 12px;
-    }
-    .top-panel {
-      width: min(960px, 100%);
-      background: white;
-      border-radius: 20px;
-      padding: 14px 18px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      margin-bottom: 10px;
-    }
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      font-size: 17px;
-    }
-    #questionText {
-      font-size: 22px;
-      font-weight: 700;
-      margin: 10px 0;
-    }
-    #gameArea {
-      position: relative;
-      width: min(960px, 100%);
-      height: 530px;
-      background: linear-gradient(180deg, #dff7ff 0%, #eaffdd 100%);
-      border: 5px solid white;
-      border-radius: 24px;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
-      box-shadow: inset 0 0 18px rgba(0,0,0,0.08), 0 4px 20px rgba(0,0,0,0.12);
-      touch-action: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+      background: #06142e;
+      color: #fff;
     }
-    .cloud {
+    body {
+      background:
+        radial-gradient(circle at 18% 18%, rgba(36, 151, 255, .18), transparent 28%),
+        radial-gradient(circle at 82% 24%, rgba(255, 221, 77, .12), transparent 24%),
+        linear-gradient(135deg, #020617 0%, #071a3b 48%, #082f49 100%);
+    }
+    #app { position: relative; width: 100vw; height: 100vh; }
+    canvas { display: block; width: 100vw; height: 100vh; }
+
+    .hud {
       position: absolute;
-      background: rgba(255,255,255,0.8);
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .pill {
+      background: rgba(15, 23, 42, .78);
+      border: 1px solid rgba(148, 163, 184, .28);
+      backdrop-filter: blur(8px);
+      padding: 8px 12px;
       border-radius: 999px;
-      height: 28px;
-      width: 90px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      font-size: 14px;
+      white-space: nowrap;
     }
-    .cloud::before, .cloud::after {
-      content: "";
+    .pill strong { color: #facc15; }
+
+    .overlay {
       position: absolute;
-      background: rgba(255,255,255,0.9);
-      border-radius: 50%;
-    }
-    .cloud::before { width: 36px; height: 36px; left: 16px; top: -14px; }
-    .cloud::after { width: 46px; height: 46px; left: 40px; top: -20px; }
-    #player {
-      position: absolute;
-      bottom: 10px;
-      left: 410px;
-      width: 120px;
-      height: 125px;
-      transition: left 0.03s linear;
-    }
-    .head {
-      width: 52px;
-      height: 52px;
-      background: #ffd7a8;
-      border-radius: 50%;
-      margin: 0 auto;
-      position: relative;
-      border: 3px solid #7c4a22;
-    }
-    .head::before, .head::after {
-      content: "";
-      position: absolute;
-      top: 22px;
-      width: 6px;
-      height: 6px;
-      background: #111827;
-      border-radius: 50%;
-    }
-    .head::before { left: 14px; }
-    .head::after { right: 14px; }
-    .body {
-      width: 58px;
-      height: 45px;
-      background: #60a5fa;
-      border-radius: 16px 16px 10px 10px;
-      margin: -2px auto 0;
-    }
-    .basket {
-      position: absolute;
-      bottom: 0;
-      left: 12px;
-      width: 96px;
-      height: 38px;
-      border: 6px solid #b45309;
-      border-top: none;
-      border-radius: 0 0 24px 24px;
-      background: rgba(245, 158, 11, 0.35);
-    }
-    .basket::before {
-      content: "";
-      position: absolute;
-      left: 14px;
-      top: -26px;
-      width: 58px;
-      height: 38px;
-      border: 5px solid #b45309;
-      border-bottom: none;
-      border-radius: 50% 50% 0 0;
-    }
-    .item {
-      position: absolute;
-      width: 130px;
-      min-height: 58px;
-      padding: 8px;
-      background: #fff7ed;
-      border: 3px solid #fb923c;
-      border-radius: 18px;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.16);
+      inset: 0;
+      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 15px;
+      padding: 22px;
+      background: rgba(2, 6, 23, .76);
+      backdrop-filter: blur(10px);
     }
-    #feedback {
-      width: min(960px, 100%);
-      min-height: 70px;
-      background: white;
-      margin-top: 10px;
-      padding: 12px 16px;
+    .card {
+      width: min(720px, 96vw);
+      max-height: 92vh;
+      overflow: auto;
+      background: linear-gradient(180deg, rgba(15, 23, 42, .98), rgba(12, 31, 65, .98));
+      border: 1px solid rgba(125, 211, 252, .28);
+      border-radius: 26px;
+      box-shadow: 0 28px 90px rgba(0,0,0,.45);
+      padding: 26px;
+    }
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.25; }
+    h1 { font-size: clamp(28px, 4vw, 46px); color: #facc15; }
+    h2 { font-size: 24px; color: #7dd3fc; }
+    p, li { line-height: 1.75; color: #dbeafe; }
+    .muted { color: #93c5fd; font-size: 14px; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    input {
+      flex: 1 1 220px;
+      border: 1px solid rgba(125, 211, 252, .35);
+      border-radius: 16px;
+      background: rgba(15, 23, 42, .86);
+      color: #fff;
+      padding: 14px 16px;
+      font-size: 16px;
+      outline: none;
+    }
+    input:focus { border-color: #facc15; }
+    button {
+      border: 0;
+      border-radius: 16px;
+      padding: 13px 18px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #082f49;
+      background: linear-gradient(135deg, #facc15, #fb923c);
+      box-shadow: 0 12px 28px rgba(250, 204, 21, .18);
+      transition: transform .16s ease, filter .16s ease;
+    }
+    button:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    button.secondary {
+      color: #e0f2fe;
+      background: rgba(30, 41, 59, .88);
+      border: 1px solid rgba(125, 211, 252, .28);
+      box-shadow: none;
+    }
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .level-box {
+      padding: 14px;
       border-radius: 18px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.1);
-      font-size: 18px;
+      background: rgba(14, 165, 233, .09);
+      border: 1px solid rgba(125, 211, 252, .2);
+    }
+    .level-box b { color: #fef08a; }
+    .options { display: grid; gap: 10px; margin-top: 16px; }
+    .option-btn {
+      width: 100%;
       text-align: left;
+      color: #eff6ff;
+      background: rgba(15, 23, 42, .86);
+      border: 1px solid rgba(125, 211, 252, .25);
+      box-shadow: none;
+      font-weight: 700;
     }
-    .correct { color: #16a34a; font-weight: 800; }
-    .wrong { color: #dc2626; font-weight: 800; }
-    .mobile-controls {
+    .option-btn.correct { background: rgba(22, 163, 74, .45); border-color: #86efac; }
+    .option-btn.wrong { background: rgba(220, 38, 38, .42); border-color: #fca5a5; }
+    .feedback {
+      margin-top: 16px;
+      border-radius: 18px;
+      padding: 14px 16px;
+      background: rgba(2, 6, 23, .48);
+      border: 1px solid rgba(148, 163, 184, .2);
       display: none;
-      margin-top: 8px;
     }
-    .mobile-controls button {
-      font-size: 24px;
-      padding: 12px 28px;
-      background: #64748b;
+    .feedback.show { display: block; }
+    .kbd {
+      display: inline-block;
+      padding: 2px 8px;
+      margin: 0 2px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      color: #fff;
+      font-weight: 700;
     }
-    @media (max-width: 700px) {
-      h1 { font-size: 32px; }
-      #questionText { font-size: 18px; }
-      #gameArea { height: 470px; }
-      .item { width: 105px; font-size: 13px; }
-      #player { width: 105px; transform: scale(0.9); transform-origin: bottom center; }
-      .mobile-controls { display: block; }
+    .touch-controls {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      z-index: 6;
+      display: grid;
+      grid-template-columns: 56px 56px 56px;
+      grid-template-rows: 56px 56px 56px;
+      gap: 8px;
+      opacity: .86;
+    }
+    .touch-controls button {
+      padding: 0;
+      border-radius: 18px;
+      color: #fff;
+      background: rgba(15, 23, 42, .72);
+      border: 1px solid rgba(125, 211, 252, .35);
+      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+      font-size: 22px;
+    }
+    .up { grid-column: 2; grid-row: 1; }
+    .left { grid-column: 1; grid-row: 2; }
+    .down { grid-column: 2; grid-row: 3; }
+    .right { grid-column: 3; grid-row: 2; }
+    .hidden { display: none !important; }
+    @media (max-width: 720px) {
+      .level-grid { grid-template-columns: 1fr; }
+      .hud { width: 94vw; }
+      .pill { font-size: 12px; padding: 7px 10px; }
+      .card { padding: 20px; border-radius: 22px; }
     }
   </style>
 </head>
 <body>
-  <section id="homeScreen" class="screen active">
-    <h1>健康知識接接樂</h1>
-    <p>選擇主題，移動人物接住正確答案。<br>接到答案後，系統會告訴你原因，幫助你記住健康知識。</p>
-    <button onclick="showScreen('topicScreen')">開始遊戲</button>
-  </section>
+  <div id="app">
+    <canvas id="game"></canvas>
+    <div class="hud">
+      <div class="pill">玩家：<strong id="hudName">尚未開始</strong></div>
+      <div class="pill">關卡：<strong id="hudLevel">1</strong></div>
+      <div class="pill">知識膠囊：<strong id="hudPower">0 / 1</strong></div>
+      <div class="pill">分數：<strong id="hudScore">0</strong></div>
+    </div>
 
-  <section id="topicScreen" class="screen">
-    <h2>請選擇想玩的健康主題</h2>
-    <div class="topic-grid" id="topicGrid"></div>
-    <button onclick="showScreen('homeScreen')">回首頁</button>
-  </section>
+    <div class="touch-controls" aria-label="行動裝置方向鍵">
+      <button class="up" data-dir="up">▲</button>
+      <button class="left" data-dir="left">◀</button>
+      <button class="right" data-dir="right">▶</button>
+      <button class="down" data-dir="down">▼</button>
+    </div>
 
-  <section id="gameScreen" class="screen">
-    <div class="top-panel">
-      <div class="status-row">
-        <span>主題：<strong id="topicName"></strong></span>
-        <span>題數：<strong id="questionNumber">1</strong> / <strong id="totalQuestion">0</strong></span>
-        <span>分數：<strong id="score">0</strong></span>
+    <section id="startOverlay" class="overlay">
+      <div class="card">
+        <h1>健康知識迷宮挑戰</h1>
+        <p>控制「健康小勇者」在黑底藍線迷宮裡收集健康星星與知識膠囊。吃到知識膠囊時，必須回答健康知識選擇題；答對才能累積通關進度，答錯知識膠囊會移動到新位置。碰到病菌怪則挑戰失敗。</p>
+        <div class="level-grid">
+          <div class="level-box"><b>第一關：簡易</b><br>答對 1 題知識膠囊題目即可通關。</div>
+          <div class="level-box"><b>第二關：中等</b><br>答對 3 題知識膠囊題目才能通關。</div>
+          <div class="level-box"><b>第三關：困難</b><br>答對 5 題知識膠囊題目完成挑戰。</div>
+        </div>
+        <p class="muted">操作方式：鍵盤 <span class="kbd">↑</span><span class="kbd">↓</span><span class="kbd">←</span><span class="kbd">→</span> 或畫面右下角方向鍵。題目依飲食、運動、傳染病預防、口腔健康、心理健康等主題隨機出現；同一次挑戰中不會重複出題。</p>
+        <div class="row">
+          <input id="nickname" placeholder="請輸入暱稱" maxlength="12" />
+          <button id="showRulesBtn">查看規則</button>
+        </div>
       </div>
-      <div id="questionText">題目載入中……</div>
-    </div>
+    </section>
 
-    <div id="gameArea">
-      <div class="cloud" style="left: 8%; top: 35px;"></div>
-      <div class="cloud" style="left: 70%; top: 70px;"></div>
-      <div id="player">
-        <div class="head"></div>
-        <div class="body"></div>
-        <div class="basket"></div>
+    <section id="rulesOverlay" class="overlay hidden">
+      <div class="card">
+        <h2>遊戲規則</h2>
+        <ol>
+          <li>收集健康星星可以加分，但通關重點是答對知識膠囊題目。</li>
+          <li>吃到知識膠囊後會跳出四選一題目，遊戲會暫停。</li>
+          <li>不論答對或答錯，都會顯示健康知識補充。</li>
+          <li>同一次挑戰中，健康知識題目不會重複出現。</li>
+          <li>答對：累積知識膠囊進度；答錯：知識膠囊會換位置，需要再去尋找。</li>
+          <li>碰到病菌怪立刻遊戲結束，需要重新挑戰。</li>
+        </ol>
+        <div class="row">
+          <button id="startGameBtn">開始遊戲</button>
+          <button class="secondary" id="backStartBtn">返回</button>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div id="feedback">使用鍵盤左右鍵移動人物，接住你認為正確的答案。</div>
-    <div class="mobile-controls">
-      <button id="leftBtn">←</button>
-      <button id="rightBtn">→</button>
-    </div>
-    <button onclick="backToTopics()">返回主題選單</button>
-  </section>
+    <section id="questionOverlay" class="overlay hidden">
+      <div class="card">
+        <p class="muted" id="questionMeta">健康知識題</p>
+        <h2 id="questionText">題目</h2>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback"></div>
+        <div class="row" style="margin-top: 14px;">
+          <button id="continueBtn" class="hidden">繼續遊戲</button>
+        </div>
+      </div>
+    </section>
 
-  <section id="endScreen" class="screen">
-    <h1>遊戲結束！</h1>
-    <h2 id="finalScore"></h2>
-    <p id="finalComment"></p>
-    <button onclick="restartSameTopic()">再玩一次同主題</button>
-    <button onclick="showScreen('topicScreen')">選擇其他主題</button>
-  </section>
+    <section id="resultOverlay" class="overlay hidden">
+      <div class="card">
+        <h1 id="resultTitle">挑戰結果</h1>
+        <p id="resultText"></p>
+        <div class="row">
+          <button id="restartBtn">重新挑戰</button>
+        </div>
+      </div>
+    </section>
+  </div>
 
   <script>
-    const questionBank = {
-      "口腔健康": [
-        {
-          question: "想要預防蛀牙，下列哪一個習慣最適合？",
-          options: ["每天刷牙並使用含氟牙膏", "睡前喝含糖飲料", "牙痛才看牙醫", "吃完糖果不用清潔"],
-          answer: "每天刷牙並使用含氟牙膏",
-          reason: "含氟牙膏可以幫助牙齒抵抗酸的侵蝕，搭配規律刷牙能降低蛀牙風險。"
-        },
-        {
-          question: "檳榔對口腔健康最主要的危害之一是什麼？",
-          options: ["增加口腔癌風險", "讓牙齒自然變白", "可以取代刷牙", "讓牙齦更健康"],
-          answer: "增加口腔癌風險",
-          reason: "嚼檳榔會提高口腔黏膜受傷與病變風險，也與口腔癌風險增加有關。"
-        }
-      ],
-      "飲食": [
-        {
-          question: "下列哪一種飲食方式比較健康？",
-          options: ["每天吃多樣化食物", "只吃炸物", "完全不喝水", "用手搖飲代替正餐"],
-          answer: "每天吃多樣化食物",
-          reason: "多樣化飲食能幫助身體獲得不同營養素，維持生長與日常活動所需。"
-        },
-        {
-          question: "想減少糖分攝取，下列哪個選擇比較好？",
-          options: ["白開水", "全糖珍珠奶茶", "含糖汽水", "每天喝能量飲料"],
-          answer: "白開水",
-          reason: "白開水不含糖，是日常補充水分最簡單也最健康的選擇。"
-        }
-      ],
-      "睡眠": [
-        {
-          question: "想提升睡眠品質，睡前比較適合做什麼？",
-          options: ["放下手機並放鬆", "狂滑短影音", "喝很多咖啡", "睡前劇烈運動"],
-          answer: "放下手機並放鬆",
-          reason: "睡前減少螢幕刺激，並建立放鬆習慣，有助於身體進入睡眠狀態。"
-        },
-        {
-          question: "長期睡眠不足可能會造成什麼影響？",
-          options: ["注意力變差", "記憶力一定變超強", "完全不影響健康", "身體永遠不會累"],
-          answer: "注意力變差",
-          reason: "睡眠不足會影響專注力、情緒與學習表現，也可能影響身體健康。"
-        }
-      ],
-      "健康體位": [
-        {
-          question: "BMI主要是用來初步評估什麼？",
-          options: ["體位狀態", "視力好壞", "牙齒數量", "血型種類"],
-          answer: "體位狀態",
-          reason: "BMI是由身高與體重計算出的指標，可作為初步評估體位的參考。"
-        },
-        {
-          question: "想維持健康體位，下列哪個做法較適合？",
-          options: ["規律活動與均衡飲食", "完全不吃晚餐", "只喝含糖飲料", "整天久坐不動"],
-          answer: "規律活動與均衡飲食",
-          reason: "健康體位需要長期生活習慣支持，包含足夠活動、均衡飲食與充足睡眠。"
-        }
-      ],
-      "傳染病": [
-        {
-          question: "預防傳染病，最基本的好習慣之一是什麼？",
-          options: ["正確洗手", "共用餐具", "生病也不休息", "打噴嚏不遮掩"],
-          answer: "正確洗手",
-          reason: "正確洗手可以減少病原體透過手部接觸進入口鼻眼的機會。"
-        },
-        {
-          question: "咳嗽或打噴嚏時，比較適合怎麼做？",
-          options: ["用衛生紙或手肘遮住口鼻", "對著別人咳嗽", "不用清潔雙手", "故意靠近人群"],
-          answer: "用衛生紙或手肘遮住口鼻",
-          reason: "遮住口鼻可以減少飛沫擴散，是保護自己與他人的基本禮貌。"
-        }
-      ],
-      "日常保健預防": [
-        {
-          question: "日常保健最重要的觀念是什麼？",
-          options: ["平時就建立健康習慣", "生病才開始注意", "完全不運動", "只靠保健食品"],
-          answer: "平時就建立健康習慣",
-          reason: "預防勝於治療，平時養成健康習慣可以降低許多健康風險。"
-        },
-        {
-          question: "下列哪一項屬於日常保健行為？",
-          options: ["定期健康檢查", "熬夜到天亮", "不喝水", "每天久坐十小時"],
-          answer: "定期健康檢查",
-          reason: "定期檢查可以幫助早期發現健康問題，並及早調整生活方式。"
-        }
-      ]
+    // 題庫根據衛生福利部、國民健康署、疾管署與心理健康平台等健康資訊整理。
+    const questionBank = [
+      {
+        level: 1,
+        topic: "均衡飲食",
+        q: "「我的餐盤」把每日飲食分成幾大類食物？",
+        options: ["3大類", "4大類", "6大類", "8大類"],
+        answer: 2,
+        explain: "臺灣版「我的餐盤」包含全穀雜糧、豆魚蛋肉、乳品、蔬菜、水果、油脂與堅果種子等6大類，重點是多樣且均衡。"
+      },
+      {
+        level: 1,
+        topic: "均衡飲食",
+        q: "依照「我的餐盤」口訣，下列哪一項最接近建議？",
+        options: ["每餐水果比蔬菜多", "每天早晚一杯奶", "豆魚蛋肉要比飯多很多", "堅果種子完全不能吃"],
+        answer: 1,
+        explain: "「我的餐盤」口訣包含每天早晚一杯奶、每餐水果拳頭大、菜比水果多一點、飯跟蔬菜一樣多等。"
+      },
+      {
+        level: 1,
+        topic: "身體活動",
+        q: "成人健康管理常見建議是每週累積多少中等強度身體活動？",
+        options: ["30分鐘", "60分鐘", "150分鐘", "600分鐘"],
+        answer: 2,
+        explain: "成人可從每週累積150分鐘中等強度活動開始，例如快走、騎腳踏車等，對健康體位與心血管健康有幫助。"
+      },
+      {
+        level: 1,
+        topic: "運動強度",
+        q: "哪一種描述最符合「中等強度運動」？",
+        options: ["完全不喘，可以唱歌", "還能說話，但無法唱歌", "完全不能說話", "坐著滑手機"],
+        answer: 1,
+        explain: "中等強度運動通常是活動時還能順暢說話，但無法唱歌，身體會有點累、心跳和呼吸比平常快。"
+      },
+      {
+        level: 1,
+        topic: "手部衛生",
+        q: "預防腸病毒最重要的日常方法之一是什麼？",
+        options: ["只用香水噴手", "用肥皂或洗手乳正確洗手", "吃很多甜食", "只在生病後才洗手"],
+        answer: 1,
+        explain: "腸病毒傳染力強，疾管署提醒大人小孩都應落實用肥皂或洗手乳正確洗手，尤其返家、進食前、如廁後。"
+      },
+      {
+        level: 1,
+        topic: "口腔健康",
+        q: "下列哪一個行為會增加口腔癌風險？",
+        options: ["規律刷牙", "嚼檳榔", "多喝白開水", "使用牙線"],
+        answer: 1,
+        explain: "檳榔本身就是一級致癌物，嚼檳榔會增加口腔癌風險；吸菸與嚼檳榔並用風險更高。"
+      },
+      {
+        level: 1,
+        topic: "心理健康",
+        q: "當感到壓力時，下列哪一種做法較健康？",
+        options: ["長期忽略壓力", "規律作息並找可信任的人談談", "完全不睡覺", "只靠熬夜打電動紓壓"],
+        answer: 1,
+        explain: "心理健康促進可從規律作息、適度活動、情緒覺察與尋求支持開始；壓力過大時可以找可信任的人或專業資源協助。"
+      },
+      {
+        level: 1,
+        topic: "飲食衛生",
+        q: "用餐及喝水前，較好的衛生習慣是什麼？",
+        options: ["不用洗手", "用乾淨流動水和肥皂洗手", "只擦衣服", "只沖一下手背"],
+        answer: 1,
+        explain: "用餐與喝水前應落實正確洗手，能降低經由手部接觸造成感染的風險。"
+      },
+      {
+        level: 2,
+        topic: "健康體位",
+        q: "若想控制體重，最完整的做法通常是什麼？",
+        options: ["只靠單次大量運動", "完全不吃主食", "規律身體活動並搭配健康飲食", "只喝含糖飲料補充體力"],
+        answer: 2,
+        explain: "健康體位管理不只靠運動，也需要搭配均衡飲食、減少高油高鹽高糖食物，才能比較穩定地維持健康。"
+      },
+      {
+        level: 2,
+        topic: "腸病毒",
+        q: "關於腸病毒環境消毒，下列哪一項較正確？",
+        options: ["酒精對腸病毒效果有限", "只要開冷氣就能殺死病毒", "灰塵越多越安全", "完全不用清潔玩具"],
+        answer: 0,
+        explain: "疾管署提醒，酒精對腸病毒的毒殺效果有限，平時應清潔消毒幼兒常接觸物品，並落實洗手。"
+      },
+      {
+        level: 2,
+        topic: "登革熱",
+        q: "預防登革熱最重要的環境行動之一是什麼？",
+        options: ["清除積水容器，避免病媒蚊孳生", "把水桶裝滿水放著", "只在室內點香", "完全不處理花盆底盤"],
+        answer: 0,
+        explain: "登革熱與病媒蚊有關，日常防治重點是巡、倒、清、刷，清除積水容器，降低蚊子孳生機會。"
+      },
+      {
+        level: 2,
+        topic: "口腔癌警訊",
+        q: "若口腔出現長期不癒合的破皮、硬塊或異常斑塊，較適合怎麼做？",
+        options: ["忽略它", "自己亂刮掉", "盡快就醫檢查", "只喝冰水"],
+        answer: 2,
+        explain: "口腔若出現「破、斑、硬、突、腫」等異常狀況，應盡快就醫檢查，早期發現能降低治療難度。"
+      },
+      {
+        level: 2,
+        topic: "傳染病預防",
+        q: "下列哪一項是良好的呼吸道與傳染病預防習慣？",
+        options: ["生病仍密集接觸嬰幼兒", "咳嗽或打噴嚏時注意遮掩口鼻", "共用水杯不清洗", "返家後不洗手直接吃東西"],
+        answer: 1,
+        explain: "咳嗽禮節、手部衛生、身體不適時休息與減少密切接觸，都是降低傳染風險的重要習慣。"
+      },
+      {
+        level: 2,
+        topic: "菸害防制",
+        q: "關於吸菸，下列哪一項較正確？",
+        options: ["吸菸只影響牙齒顏色", "吸菸會增加多種疾病與癌症風險", "少量吸菸完全沒有風險", "吸菸可以提升肺功能"],
+        answer: 1,
+        explain: "吸菸會危害呼吸系統、心血管系統，也與多種癌症風險有關；戒菸能逐步降低健康風險。"
+      },
+      {
+        level: 2,
+        topic: "均衡飲食",
+        q: "下列哪一種飲食選擇較符合健康飲食原則？",
+        options: ["蔬果多樣化，選擇全穀與未精製雜糧", "每天只吃油炸食物", "完全不吃蔬菜", "用含糖飲料代替水"],
+        answer: 0,
+        explain: "健康飲食可從多樣蔬果、全穀未精製雜糧、優質蛋白質、減少高油高鹽高糖開始。"
+      },
+      {
+        level: 2,
+        topic: "心理健康",
+        q: "下列哪一項比較能幫助維持心理健康？",
+        options: ["長期封閉自己，不求助", "保持規律生活、適度活動與社會支持", "每天熬夜到很晚", "遇到壓力只責怪自己"],
+        answer: 1,
+        explain: "心理健康需要日常維護，規律作息、適度活動、與人連結和必要時尋求協助，都是重要保護因子。"
+      },
+      {
+        level: 3,
+        topic: "我的餐盤",
+        q: "下列哪一組最符合「我的餐盤」的概念？",
+        options: ["只吃肉和飯", "每餐有全穀雜糧、蔬菜、蛋白質等多類食物", "水果越多越好、不需蔬菜", "完全不需要乳品或替代品"],
+        answer: 1,
+        explain: "「我的餐盤」強調六大類食物均衡攝取，可用拳頭、掌心等簡單方式估計每餐份量。"
+      },
+      {
+        level: 3,
+        topic: "口腔癌篩檢",
+        q: "政府提供口腔黏膜檢查的主要目的較接近哪一項？",
+        options: ["提早發現口腔病灶，降低晚期與死亡風險", "讓大家可以安心繼續嚼檳榔", "替代每天刷牙", "只檢查牙齒美白"],
+        answer: 0,
+        explain: "定期口腔黏膜檢查可幫助早期發現異常，尤其有嚼檳榔或吸菸經驗者更應注意。"
+      },
+      {
+        level: 3,
+        topic: "健康資訊辨識",
+        q: "看到網路健康偏方時，最適合的做法是什麼？",
+        options: ["馬上照做並轉傳", "只看標題就相信", "查證來源，優先參考政府或專業醫療機構資訊", "越誇張越可信"],
+        answer: 2,
+        explain: "健康資訊應查證來源與證據，優先參考政府衛生單位、醫療院所或具專業審查的健康資訊。"
+      },
+      {
+        level: 3,
+        topic: "運動與健康",
+        q: "若一次無法運動30分鐘，較可行的方式是什麼？",
+        options: ["完全放棄運動", "分次累積，例如每次10分鐘以上", "只在月底一次運動很久", "只看運動影片不動"],
+        answer: 1,
+        explain: "若一次無法達到30分鐘，可分次累積中等強度活動，重點是規律且總量達標。"
+      },
+      {
+        level: 3,
+        topic: "腸病毒照護",
+        q: "幼童被醫師診斷感染腸病毒後，下列哪一項較適當？",
+        options: ["照常去上課", "在家休息，避免造成交叉感染", "和其他小朋友共用餐具", "只要吃糖就會好"],
+        answer: 1,
+        explain: "腸病毒傳染力強，生病時應在家休息、減少接觸，並配合清潔消毒與洗手。"
+      },
+      {
+        level: 3,
+        topic: "檳榔迷思",
+        q: "關於檳榔，下列哪一項正確？",
+        options: ["沒有加紅白灰就完全不會致癌", "吐掉檳榔汁就沒有風險", "檳榔本身就是一級致癌物", "嚼檳榔可以保護牙齦"],
+        answer: 2,
+        explain: "檳榔本身就是一級致癌物，不論有無添加物都可能傷害口腔黏膜並增加口腔癌風險。"
+      },
+      {
+        level: 3,
+        topic: "心理健康資源",
+        q: "如果壓力或情緒困擾已經影響生活，較適合怎麼做？",
+        options: ["一直忍耐不說", "尋求可信任的大人、學校輔導或專業資源協助", "用傷害自己的方式處理", "完全停止與人互動"],
+        answer: 1,
+        explain: "當情緒困擾影響生活時，向可信任的大人、學校輔導老師或專業資源求助，是照顧自己的重要方法。"
+      },
+      {
+        level: 3,
+        topic: "飲食衛生",
+        q: "外食時，下列哪一項較能降低飲食衛生風險？",
+        options: ["選擇注重衛生的店家並落實洗手", "吃飯前不用洗手", "共飲共食不使用公筷母匙", "生水看起來乾淨就直接喝"],
+        answer: 0,
+        explain: "外食可選擇注重衛生的店家，並在用餐前洗手；也可使用公筷母匙，減少共食造成的感染風險。"
+      }
+    ];
+
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const hudName = document.getElementById("hudName");
+    const hudLevel = document.getElementById("hudLevel");
+    const hudPower = document.getElementById("hudPower");
+    const hudScore = document.getElementById("hudScore");
+    const startOverlay = document.getElementById("startOverlay");
+    const rulesOverlay = document.getElementById("rulesOverlay");
+    const questionOverlay = document.getElementById("questionOverlay");
+    const resultOverlay = document.getElementById("resultOverlay");
+    const nicknameInput = document.getElementById("nickname");
+    const questionText = document.getElementById("questionText");
+    const questionMeta = document.getElementById("questionMeta");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const continueBtn = document.getElementById("continueBtn");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
+
+    const baseMaze = [
+      "#####################",
+      "#.........#.........#",
+      "#.###.###.#.###.###.#",
+      "#.#.............#...#",
+      "#.#.###.#.###.#.#.#.#",
+      "#.....#.#...#.#.....#",
+      "###.#.#.###.#.#.#.###",
+      "#...#.....#.....#...#",
+      "#.#####.#.#.#.#####.#",
+      "#.......#...#.......#",
+      "###.#.###.#.###.#.###",
+      "#...#.....#.....#...#",
+      "#.#####.#.#.#.#####.#",
+      "#.....#.#...#.#.....#",
+      "#.#.#.#.###.#.#.#.#.#",
+      "#.#.............#...#",
+      "#.###.###.#.###.###.#",
+      "#.........#.........#",
+      "#####################"
+    ];
+
+    const levelSettings = [
+      { need: 1, ghostCount: 1, ghostSpeed: 2.1, label: "簡易" },
+      { need: 3, ghostCount: 2, ghostSpeed: 2.55, label: "中等" },
+      { need: 5, ghostCount: 3, ghostSpeed: 2.95, label: "困難" }
+    ];
+
+    let state = {
+      playerName: "玩家",
+      level: 1,
+      score: 0,
+      powerGot: 0,
+      running: false,
+      paused: false,
+      dots: new Set(),
+      powerBalls: [],
+      usedQuestions: new Set(),
+      currentQuestion: null,
+      lastAnswerCorrect: false,
+      player: null,
+      ghosts: [],
+      cell: 28,
+      offsetX: 0,
+      offsetY: 0,
+      lastTime: 0
     };
 
-    const topicGrid = document.getElementById("topicGrid");
-    const gameArea = document.getElementById("gameArea");
-    const player = document.getElementById("player");
-    const feedback = document.getElementById("feedback");
-
-    let currentTopic = "";
-    let currentQuestions = [];
-    let questionIndex = 0;
-    let score = 0;
-    let playerX = 410;
-    let moveLeft = false;
-    let moveRight = false;
-    let items = [];
-    let gameLoopId = null;
-    let itemSpeed = 2.2;
-    let locked = false;
-
-    Object.keys(questionBank).forEach(topic => {
-      const btn = document.createElement("button");
-      btn.className = "topic-btn";
-      btn.textContent = topic;
-      btn.onclick = () => startGame(topic);
-      topicGrid.appendChild(btn);
-    });
-
-    function showScreen(id) {
-      document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
+    function resize() {
+      canvas.width = window.innerWidth * devicePixelRatio;
+      canvas.height = window.innerHeight * devicePixelRatio;
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      const cols = baseMaze[0].length;
+      const rows = baseMaze.length;
+      state.cell = Math.max(20, Math.min(window.innerWidth / (cols + 2), (window.innerHeight - 80) / (rows + 2)));
+      state.offsetX = (window.innerWidth - cols * state.cell) / 2;
+      state.offsetY = Math.max(62, (window.innerHeight - rows * state.cell) / 2 + 20);
     }
 
-    function startGame(topic) {
-      currentTopic = topic;
-      currentQuestions = [...questionBank[topic]];
-      questionIndex = 0;
-      score = 0;
-      document.getElementById("topicName").textContent = topic;
-      document.getElementById("totalQuestion").textContent = currentQuestions.length;
-      document.getElementById("score").textContent = score;
-      showScreen("gameScreen");
-      loadQuestion();
+    window.addEventListener("resize", resize);
+    resize();
+
+    function isWall(col, row) {
+      if (row < 0 || row >= baseMaze.length || col < 0 || col >= baseMaze[0].length) return true;
+      return baseMaze[row][col] === "#";
     }
 
-    function loadQuestion() {
-      clearItems();
-      locked = false;
-      itemSpeed = 2.2 + questionIndex * 0.3;
-      const q = currentQuestions[questionIndex];
-      document.getElementById("questionNumber").textContent = questionIndex + 1;
-      document.getElementById("questionText").textContent = q.question;
-      feedback.innerHTML = "移動人物，接住你認為正確的答案。";
-      createItems(q.options, q.answer);
-      startLoop();
-    }
-
-    function createItems(options, answer) {
-      const shuffled = [...options].sort(() => Math.random() - 0.5);
-      const areaWidth = gameArea.clientWidth;
-      const positions = [0.08, 0.32, 0.56, 0.78].map(p => p * areaWidth);
-
-      shuffled.forEach((text, i) => {
-        const div = document.createElement("div");
-        div.className = "item";
-        div.textContent = text;
-        div.dataset.correct = text === answer ? "true" : "false";
-        div.style.left = Math.min(positions[i], areaWidth - 140) + "px";
-        div.style.top = (-80 - Math.random() * 90) + "px";
-        gameArea.appendChild(div);
-        items.push(div);
-      });
-    }
-
-    function startLoop() {
-      cancelAnimationFrame(gameLoopId);
-      gameLoop();
-    }
-
-    function gameLoop() {
-      if (!document.getElementById("gameScreen").classList.contains("active")) return;
-
-      movePlayer();
-      moveItems();
-      checkCollision();
-
-      gameLoopId = requestAnimationFrame(gameLoop);
-    }
-
-    function movePlayer() {
-      const areaWidth = gameArea.clientWidth;
-      const playerWidth = player.offsetWidth;
-      if (moveLeft) playerX -= 6;
-      if (moveRight) playerX += 6;
-      playerX = Math.max(0, Math.min(areaWidth - playerWidth, playerX));
-      player.style.left = playerX + "px";
-    }
-
-    function moveItems() {
-      items.forEach(item => {
-        const top = parseFloat(item.style.top);
-        item.style.top = (top + itemSpeed) + "px";
-      });
-
-      const allMissed = items.every(item => parseFloat(item.style.top) > gameArea.clientHeight + 30);
-      if (allMissed && !locked) {
-        locked = true;
-        showResult(false, "沒有接到答案", "這題沒有接到任何選項，可以再看一次題目，判斷哪個選項最符合健康原則。＂");
-      }
-    }
-
-    function checkCollision() {
-      if (locked) return;
-      const playerRect = player.getBoundingClientRect();
-      const basketRect = {
-        left: playerRect.left + 10,
-        right: playerRect.right - 10,
-        top: playerRect.bottom - 44,
-        bottom: playerRect.bottom
+    function cellCenter(col, row) {
+      return {
+        x: state.offsetX + col * state.cell + state.cell / 2,
+        y: state.offsetY + row * state.cell + state.cell / 2
       };
+    }
 
-      for (const item of items) {
-        const itemRect = item.getBoundingClientRect();
-        const isHit = !(
-          itemRect.right < basketRect.left ||
-          itemRect.left > basketRect.right ||
-          itemRect.bottom < basketRect.top ||
-          itemRect.top > basketRect.bottom
-        );
+    function toCell(x, y) {
+      return {
+        col: Math.floor((x - state.offsetX) / state.cell),
+        row: Math.floor((y - state.offsetY) / state.cell)
+      };
+    }
 
-        if (isHit) {
-          locked = true;
-          const q = currentQuestions[questionIndex];
-          const correct = item.dataset.correct === "true";
-          if (correct) score += 10;
-          showResult(correct, item.textContent, q.reason);
-          break;
+    function randomOpenCell(minDistanceFromPlayer = 0) {
+      const candidates = [];
+      for (let r = 1; r < baseMaze.length - 1; r++) {
+        for (let c = 1; c < baseMaze[0].length - 1; c++) {
+          if (!isWall(c, r)) {
+            if (state.player && minDistanceFromPlayer > 0) {
+              const pc = toCell(state.player.x, state.player.y);
+              const dist = Math.abs(pc.col - c) + Math.abs(pc.row - r);
+              if (dist < minDistanceFromPlayer) continue;
+            }
+            candidates.push({ col: c, row: r });
+          }
+        }
+      }
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+
+    function buildDots() {
+      state.dots.clear();
+      for (let r = 0; r < baseMaze.length; r++) {
+        for (let c = 0; c < baseMaze[0].length; c++) {
+          if (!isWall(c, r)) state.dots.add(`${c},${r}`);
+        }
+      }
+      ["1,1", "10,9", "19,17"].forEach(k => state.dots.delete(k));
+    }
+
+    function placePowerBalls() {
+      state.powerBalls = [];
+      const need = levelSettings[state.level - 1].need;
+      const used = new Set();
+      while (state.powerBalls.length < need) {
+        const cell = randomOpenCell(6);
+        const key = `${cell.col},${cell.row}`;
+        if (!used.has(key) && key !== "1,1") {
+          used.add(key);
+          state.powerBalls.push({ ...cell, active: true, pulse: Math.random() * 10 });
+          state.dots.delete(key);
         }
       }
     }
 
-    function showResult(correct, chosenText, reason) {
-      cancelAnimationFrame(gameLoopId);
-      document.getElementById("score").textContent = score;
-      feedback.innerHTML = correct
-        ? `<span class="correct">答對了！</span>你接到：「${chosenText}」。<br>${reason}`
-        : `<span class="wrong">答錯了。</span>你接到：「${chosenText}」。<br>${reason}`;
+    function resetLevel() {
+      const start = cellCenter(1, 1);
+      state.player = {
+        x: start.x,
+        y: start.y,
+        dir: { x: 0, y: 0 },
+        nextDir: { x: 1, y: 0 },
+        speed: 4.4,
+        mouth: 0
+      };
+      buildDots();
+      state.powerGot = 0;
+      placePowerBalls();
+      state.ghosts = [];
+      const setting = levelSettings[state.level - 1];
+      const starts = [{ col: 19, row: 17 }, { col: 19, row: 1 }, { col: 1, row: 17 }];
+      for (let i = 0; i < setting.ghostCount; i++) {
+        const p = cellCenter(starts[i].col, starts[i].row);
+        state.ghosts.push({
+          x: p.x,
+          y: p.y,
+          dir: [{ x: -1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 }][i],
+          speed: setting.ghostSpeed,
+          colorIndex: i
+        });
+      }
+      updateHUD();
+    }
 
-      setTimeout(() => {
-        questionIndex++;
-        if (questionIndex < currentQuestions.length) {
-          loadQuestion();
-        } else {
-          endGame();
+    function updateHUD() {
+      hudName.textContent = state.playerName;
+      hudLevel.textContent = `${state.level}（${levelSettings[state.level - 1].label}）`;
+      hudPower.textContent = `${state.powerGot} / ${levelSettings[state.level - 1].need}`;
+      hudScore.textContent = state.score;
+    }
+
+    function canMove(entity, dir) {
+      const nextX = entity.x + dir.x * state.cell * 0.42;
+      const nextY = entity.y + dir.y * state.cell * 0.42;
+      const c = toCell(nextX, nextY);
+      return !isWall(c.col, c.row);
+    }
+
+    function nearCenter(entity, tolerance = 4) {
+      const c = toCell(entity.x, entity.y);
+      const center = cellCenter(c.col, c.row);
+      return Math.abs(entity.x - center.x) < tolerance && Math.abs(entity.y - center.y) < tolerance;
+    }
+
+    function snapToCenter(entity) {
+      const c = toCell(entity.x, entity.y);
+      const center = cellCenter(c.col, c.row);
+      entity.x = center.x;
+      entity.y = center.y;
+    }
+
+    function movePlayer(dt) {
+      const p = state.player;
+      if (nearCenter(p, 5)) {
+        snapToCenter(p);
+        if (canMove(p, p.nextDir)) p.dir = { ...p.nextDir };
+        if (!canMove(p, p.dir)) p.dir = { x: 0, y: 0 };
+      }
+      p.x += p.dir.x * p.speed * dt;
+      p.y += p.dir.y * p.speed * dt;
+      p.mouth += dt * 0.018;
+    }
+
+    function moveGhosts(dt) {
+      const dirs = [
+        { x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }
+      ];
+      for (const g of state.ghosts) {
+        if (nearCenter(g, 5)) {
+          snapToCenter(g);
+          let possible = dirs.filter(d => canMove(g, d));
+          const reverse = { x: -g.dir.x, y: -g.dir.y };
+          if (possible.length > 1) possible = possible.filter(d => !(d.x === reverse.x && d.y === reverse.y));
+          const pc = toCell(state.player.x, state.player.y);
+          const gc = toCell(g.x, g.y);
+          if (Math.random() < 0.55) {
+            possible.sort((a, b) => {
+              const da = Math.abs(pc.col - (gc.col + a.x)) + Math.abs(pc.row - (gc.row + a.y));
+              const db = Math.abs(pc.col - (gc.col + b.x)) + Math.abs(pc.row - (gc.row + b.y));
+              return da - db;
+            });
+            g.dir = possible[0] || g.dir;
+          } else {
+            g.dir = possible[Math.floor(Math.random() * possible.length)] || g.dir;
+          }
         }
-      }, 2600);
+        g.x += g.dir.x * g.speed * dt;
+        g.y += g.dir.y * g.speed * dt;
+      }
     }
 
-    function endGame() {
-      clearItems();
-      showScreen("endScreen");
-      document.getElementById("finalScore").textContent = `你的分數：${score} / ${currentQuestions.length * 10}`;
-      const percent = score / (currentQuestions.length * 10);
-      document.getElementById("finalComment").textContent = percent >= 0.8
-        ? "太棒了！你已經掌握不少健康知識。"
-        : percent >= 0.5
-          ? "不錯喔！再複習原因說明，會更有印象。"
-          : "沒關係，健康知識可以透過遊戲慢慢累積。";
+    function checkCollectibles() {
+      const cell = toCell(state.player.x, state.player.y);
+      const key = `${cell.col},${cell.row}`;
+      if (state.dots.has(key)) {
+        state.dots.delete(key);
+        state.score += 10;
+      }
+      const power = state.powerBalls.find(p => p.active && p.col === cell.col && p.row === cell.row);
+      if (power) {
+        power.active = false;
+        openQuestion(power);
+      }
+      updateHUD();
     }
 
-    function clearItems() {
-      items.forEach(item => item.remove());
-      items = [];
+    function checkGhostCollision() {
+      for (const g of state.ghosts) {
+        const d = Math.hypot(state.player.x - g.x, state.player.y - g.y);
+        if (d < state.cell * 0.48) {
+          endGame(false);
+          return;
+        }
+      }
     }
 
-    function restartSameTopic() {
-      startGame(currentTopic);
+    function pickQuestion() {
+      // 題目不重複機制：
+      // 同一次挑戰中，所有已出現過的題目都會記錄在 usedQuestions。
+      // 第1關只抽簡易題；第2關抽簡易＋中等題；第3關抽簡易＋中等＋困難題。
+      // 若該難度範圍題目真的全部用完，才會重置該難度範圍的題目池，避免遊戲卡住。
+      const allowedIndices = questionBank
+        .map((q, index) => ({ q, index }))
+        .filter(item => item.q.level <= state.level)
+        .map(item => item.index);
+
+      let availableIndices = allowedIndices.filter(index => !state.usedQuestions.has(index));
+
+      if (availableIndices.length === 0) {
+        // 理論上目前題庫數量足夠完成三關，不會走到這裡。
+        // 保留這段是為了之後如果關卡需求增加，遊戲仍可繼續執行。
+        allowedIndices.forEach(index => state.usedQuestions.delete(index));
+        availableIndices = [...allowedIndices];
+      }
+
+      const pickedIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+      state.usedQuestions.add(pickedIndex);
+      return questionBank[pickedIndex];
     }
 
-    function backToTopics() {
-      cancelAnimationFrame(gameLoopId);
-      clearItems();
-      showScreen("topicScreen");
+    function openQuestion(powerBall) {
+      state.paused = true;
+      state.currentQuestion = { data: pickQuestion(), powerBall };
+      const q = state.currentQuestion.data;
+      questionMeta.textContent = `第 ${state.level} 關｜${q.topic}`;
+      questionText.textContent = q.q;
+      optionsEl.innerHTML = "";
+      feedbackEl.className = "feedback";
+      feedbackEl.innerHTML = "";
+      continueBtn.classList.add("hidden");
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = `${String.fromCharCode(65 + index)}. ${opt}`;
+        btn.onclick = () => answerQuestion(index);
+        optionsEl.appendChild(btn);
+      });
+      questionOverlay.classList.remove("hidden");
     }
 
-    document.addEventListener("keydown", e => {
-      if (e.key === "ArrowLeft") moveLeft = true;
-      if (e.key === "ArrowRight") moveRight = true;
+    function answerQuestion(index) {
+      const q = state.currentQuestion.data;
+      const buttons = [...document.querySelectorAll(".option-btn")];
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === q.answer) btn.classList.add("correct");
+        if (i === index && i !== q.answer) btn.classList.add("wrong");
+      });
+      state.lastAnswerCorrect = index === q.answer;
+      if (state.lastAnswerCorrect) {
+        state.powerGot += 1;
+        state.score += 100;
+        feedbackEl.innerHTML = `<h3>答對了！</h3><p>${q.explain}</p>`;
+      } else {
+        feedbackEl.innerHTML = `<h3>答錯了，正確答案是 ${String.fromCharCode(65 + q.answer)}。</h3><p>${q.explain}</p><p class="muted">這個知識膠囊會移動到新的位置，請再次尋找。</p>`;
+      }
+      feedbackEl.classList.add("show");
+      continueBtn.classList.remove("hidden");
+      updateHUD();
+    }
+
+    function relocatePowerBall(powerBall) {
+      let cell;
+      let key;
+      do {
+        cell = randomOpenCell(7);
+        key = `${cell.col},${cell.row}`;
+      } while (state.powerBalls.some(p => p.active && p.col === cell.col && p.row === cell.row));
+      powerBall.col = cell.col;
+      powerBall.row = cell.row;
+      powerBall.active = true;
+      state.dots.delete(key);
+    }
+
+    continueBtn.addEventListener("click", () => {
+      const powerBall = state.currentQuestion.powerBall;
+      questionOverlay.classList.add("hidden");
+      if (!state.lastAnswerCorrect) {
+        relocatePowerBall(powerBall);
+      }
+      state.currentQuestion = null;
+      if (state.powerGot >= levelSettings[state.level - 1].need) {
+        if (state.level >= 3) {
+          endGame(true);
+        } else {
+          state.level += 1;
+          resetLevel();
+          state.paused = false;
+        }
+      } else {
+        state.paused = false;
+      }
     });
 
-    document.addEventListener("keyup", e => {
-      if (e.key === "ArrowLeft") moveLeft = false;
-      if (e.key === "ArrowRight") moveRight = false;
-    });
-
-    function bindHoldButton(buttonId, direction) {
-      const btn = document.getElementById(buttonId);
-      const start = () => direction === "left" ? moveLeft = true : moveRight = true;
-      const stop = () => direction === "left" ? moveLeft = false : moveRight = false;
-      btn.addEventListener("mousedown", start);
-      btn.addEventListener("mouseup", stop);
-      btn.addEventListener("mouseleave", stop);
-      btn.addEventListener("touchstart", e => { e.preventDefault(); start(); });
-      btn.addEventListener("touchend", stop);
+    function endGame(success) {
+      state.running = false;
+      state.paused = true;
+      resultTitle.textContent = success ? "挑戰成功！" : "挑戰失敗！";
+      resultText.innerHTML = success
+        ? `${state.playerName} 完成三關健康知識挑戰，總分 <b>${state.score}</b> 分。你不只避開病菌怪，也收集了健康知識！`
+        : `${state.playerName} 碰到病菌怪了，遊戲結束。可以重新挑戰，熟悉題目和迷宮後再試一次。`;
+      resultOverlay.classList.remove("hidden");
     }
 
-    bindHoldButton("leftBtn", "left");
-    bindHoldButton("rightBtn", "right");
+    function drawMaze() {
+      const rows = baseMaze.length;
+      const cols = baseMaze[0].length;
+      ctx.save();
+      ctx.translate(state.offsetX, state.offsetY);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * state.cell;
+          const y = r * state.cell;
+          if (baseMaze[r][c] === "#") {
+            const grad = ctx.createLinearGradient(x, y, x + state.cell, y + state.cell);
+            grad.addColorStop(0, "#1d4ed8");
+            grad.addColorStop(1, "#0284c7");
+            ctx.fillStyle = grad;
+            roundRect(ctx, x + 2, y + 2, state.cell - 4, state.cell - 4, 8);
+            ctx.fill();
+            ctx.strokeStyle = "rgba(125, 211, 252, .38)";
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.restore();
+    }
 
-    window.addEventListener("resize", () => {
-      const areaWidth = gameArea.clientWidth;
-      playerX = Math.min(playerX, areaWidth - player.offsetWidth);
-      player.style.left = playerX + "px";
+    function drawDots() {
+      // 健康星星：取代傳統小豆子，讓視覺更有健康教育 app 的原創感。
+      ctx.fillStyle = "rgba(250, 250, 210, .92)";
+      for (const key of state.dots) {
+        const [c, r] = key.split(",").map(Number);
+        const p = cellCenter(c, r);
+        const outer = Math.max(4, state.cell * .13);
+        const inner = outer * .45;
+        ctx.beginPath();
+        for (let i = 0; i < 10; i++) {
+          const angle = -Math.PI / 2 + i * Math.PI / 5;
+          const radius = i % 2 === 0 ? outer : inner;
+          const x = p.x + Math.cos(angle) * radius;
+          const y = p.y + Math.sin(angle) * radius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    function drawPowerBalls(time) {
+      // 知識膠囊：取代能量球，吃到後會回答健康知識題。
+      for (const p of state.powerBalls) {
+        if (!p.active) continue;
+        const center = cellCenter(p.col, p.row);
+        const radius = state.cell * (0.25 + Math.sin(time / 180 + p.pulse) * 0.035);
+        const glow = ctx.createRadialGradient(center.x, center.y, 2, center.x, center.y, radius * 2.1);
+        glow.addColorStop(0, "rgba(255,255,255,.95)");
+        glow.addColorStop(.45, "rgba(34,211,238,.75)");
+        glow.addColorStop(1, "rgba(34,211,238,0)");
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, radius * 2.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(center.x, center.y);
+        ctx.rotate(Math.sin(time / 420 + p.pulse) * 0.22);
+        ctx.fillStyle = "#22d3ee";
+        roundRect(ctx, -radius * 1.45, -radius * .62, radius * 2.9, radius * 1.24, radius * .62);
+        ctx.fill();
+        ctx.fillStyle = "#f8fafc";
+        roundRect(ctx, -radius * 1.45, -radius * .62, radius * 1.45, radius * 1.24, radius * .62);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(15, 23, 42, .45)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, -radius * .58);
+        ctx.lineTo(0, radius * .58);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function drawPlayer() {
+      // 健康小勇者：避免使用黃色缺角圓形，改成帶有健康盾牌感的原創角色。
+      const p = state.player;
+      const r = state.cell * .38;
+      const bob = Math.sin(p.mouth * 1.6) * 2;
+
+      ctx.save();
+      ctx.translate(p.x, p.y + bob);
+      ctx.fillStyle = "#34d399";
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#dcfce7";
+      ctx.beginPath();
+      ctx.arc(0, r * .1, r * .58, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.beginPath();
+      ctx.arc(-r * .23, -r * .08, r * .08, 0, Math.PI * 2);
+      ctx.arc(r * .23, -r * .08, r * .08, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = "#0f172a";
+      ctx.lineWidth = Math.max(2, state.cell * .04);
+      ctx.beginPath();
+      ctx.arc(0, r * .08, r * .22, 0.15, Math.PI - 0.15);
+      ctx.stroke();
+
+      // 小小醫護帽與十字符號，強化健康主題。
+      ctx.fillStyle = "#f8fafc";
+      roundRect(ctx, -r * .45, -r * 1.05, r * .9, r * .36, r * .12);
+      ctx.fill();
+      ctx.fillStyle = "#ef4444";
+      ctx.fillRect(-r * .07, -r * .99, r * .14, r * .24);
+      ctx.fillRect(-r * .18, -r * .9, r * .36, r * .08);
+
+      // 依方向加一個小點，提示移動方向。
+      if (p.dir.x !== 0 || p.dir.y !== 0) {
+        ctx.fillStyle = "rgba(15, 23, 42, .28)";
+        ctx.beginPath();
+        ctx.arc(p.dir.x * r * .85, p.dir.y * r * .85, r * .14, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawGhosts(time) {
+      // 病菌怪：改成細菌／病毒泡泡造型，避免與經典幽靈角色過度相似。
+      const colors = ["#fb7185", "#a78bfa", "#f97316"];
+      for (const g of state.ghosts) {
+        const r = state.cell * .34;
+        ctx.save();
+        ctx.translate(g.x, g.y);
+        ctx.rotate(Math.sin(time / 500 + g.colorIndex) * .12);
+
+        ctx.strokeStyle = colors[g.colorIndex % colors.length];
+        ctx.lineWidth = Math.max(2, state.cell * .045);
+        for (let i = 0; i < 10; i++) {
+          const angle = i * Math.PI * 2 / 10;
+          const x1 = Math.cos(angle) * r * .82;
+          const y1 = Math.sin(angle) * r * .82;
+          const x2 = Math.cos(angle) * r * 1.2;
+          const y2 = Math.sin(angle) * r * 1.2;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(x2, y2, r * .1, 0, Math.PI * 2);
+          ctx.fillStyle = colors[g.colorIndex % colors.length];
+          ctx.fill();
+        }
+
+        ctx.fillStyle = colors[g.colorIndex % colors.length];
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(255,255,255,.92)";
+        ctx.beginPath();
+        ctx.arc(-r * .28, -r * .14, r * .18, 0, Math.PI * 2);
+        ctx.arc(r * .28, -r * .14, r * .18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#0f172a";
+        ctx.beginPath();
+        ctx.arc(-r * .22 + g.dir.x * 2, -r * .12 + g.dir.y * 2, r * .07, 0, Math.PI * 2);
+        ctx.arc(r * .34 + g.dir.x * 2, -r * .12 + g.dir.y * 2, r * .07, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = Math.max(2, state.cell * .035);
+        ctx.beginPath();
+        ctx.arc(0, r * .22, r * .25, Math.PI + .2, Math.PI * 2 - .2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function drawBackground(time) {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      for (let i = 0; i < 28; i++) {
+        const x = (i * 97 + time * 0.012) % window.innerWidth;
+        const y = (i * 53 + Math.sin(time / 900 + i) * 18 + 80) % window.innerHeight;
+        ctx.strokeStyle = "rgba(125, 211, 252, .16)";
+        ctx.beginPath();
+        ctx.arc(x, y, 3 + (i % 4), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function loop(time) {
+      const dt = Math.min(22, time - state.lastTime || 16);
+      state.lastTime = time;
+      drawBackground(time);
+      drawMaze();
+      if (state.running && !state.paused) {
+        movePlayer(dt);
+        moveGhosts(dt);
+        checkCollectibles();
+        checkGhostCollision();
+      }
+      drawDots();
+      drawPowerBalls(time);
+      if (state.player) drawPlayer();
+      drawGhosts(time);
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    function setDirection(dir) {
+      if (!state.player) return;
+      const map = {
+        up: { x: 0, y: -1 },
+        down: { x: 0, y: 1 },
+        left: { x: -1, y: 0 },
+        right: { x: 1, y: 0 }
+      };
+      state.player.nextDir = map[dir] || state.player.nextDir;
+    }
+
+    window.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp") setDirection("up");
+      if (e.key === "ArrowDown") setDirection("down");
+      if (e.key === "ArrowLeft") setDirection("left");
+      if (e.key === "ArrowRight") setDirection("right");
     });
+
+    document.querySelectorAll(".touch-controls button").forEach(btn => {
+      btn.addEventListener("click", () => setDirection(btn.dataset.dir));
+    });
+
+    document.getElementById("showRulesBtn").addEventListener("click", () => {
+      state.playerName = nicknameInput.value.trim() || "健康小勇者";
+      hudName.textContent = state.playerName;
+      startOverlay.classList.add("hidden");
+      rulesOverlay.classList.remove("hidden");
+    });
+
+    document.getElementById("backStartBtn").addEventListener("click", () => {
+      rulesOverlay.classList.add("hidden");
+      startOverlay.classList.remove("hidden");
+    });
+
+    document.getElementById("startGameBtn").addEventListener("click", () => {
+      state.level = 1;
+      state.score = 0;
+      state.usedQuestions.clear();
+      state.running = true;
+      state.paused = false;
+      resetLevel();
+      rulesOverlay.classList.add("hidden");
+    });
+
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      resultOverlay.classList.add("hidden");
+      startOverlay.classList.remove("hidden");
+      state.running = false;
+      state.paused = true;
+      state.level = 1;
+      state.score = 0;
+      state.powerGot = 0;
+      state.usedQuestions.clear();
+      resetLevel();
+    });
+
+    resetLevel();
   </script>
 </body>
 </html>
+
