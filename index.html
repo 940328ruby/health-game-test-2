@@ -17,16 +17,15 @@
     }
     body {
       background:
-        radial-gradient(circle at 18% 18%, rgba(36, 151, 255, .18), transparent 28%),
-        radial-gradient(circle at 82% 24%, rgba(255, 221, 77, .12), transparent 24%),
+        radial-gradient(circle at 18% 18%, rgba(36,151,255,.16), transparent 28%),
+        radial-gradient(circle at 82% 24%, rgba(255,221,77,.10), transparent 24%),
         linear-gradient(135deg, #020617 0%, #071a3b 48%, #082f49 100%);
     }
     #app { position: relative; width: 100vw; height: 100vh; }
     canvas { display: block; width: 100vw; height: 100vh; }
-
     .hud {
       position: absolute;
-      top: 18px;
+      top: 22px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
@@ -48,7 +47,6 @@
       white-space: nowrap;
     }
     .pill strong { color: #facc15; }
-
     .overlay {
       position: absolute;
       inset: 0;
@@ -64,8 +62,8 @@
       width: min(760px, 92vw);
       max-height: 92vh;
       overflow: auto;
-      background: linear-gradient(180deg, rgba(15, 23, 42, .98), rgba(12, 31, 65, .98));
-      border: 1px solid rgba(125, 211, 252, .28);
+      background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(12,31,65,.98));
+      border: 1px solid rgba(125,211,252,.28);
       border-radius: 26px;
       box-shadow: 0 28px 90px rgba(0,0,0,.45);
       padding: 28px;
@@ -76,17 +74,6 @@
     p, li { line-height: 1.75; color: #dbeafe; }
     .muted { color: #93c5fd; font-size: 14px; }
     .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-    input {
-      flex: 1 1 260px;
-      border: 1px solid rgba(125, 211, 252, .35);
-      border-radius: 16px;
-      background: rgba(15, 23, 42, .86);
-      color: #fff;
-      padding: 14px 16px;
-      font-size: 16px;
-      outline: none;
-    }
-    input:focus { border-color: #facc15; }
     button {
       border: 0;
       border-radius: 16px;
@@ -96,14 +83,14 @@
       cursor: pointer;
       color: #082f49;
       background: linear-gradient(135deg, #facc15, #fb923c);
-      box-shadow: 0 12px 28px rgba(250, 204, 21, .18);
+      box-shadow: 0 12px 28px rgba(250,204,21,.18);
       transition: transform .16s ease, filter .16s ease;
     }
     button:hover { transform: translateY(-1px); filter: brightness(1.05); }
     button.secondary {
       color: #e0f2fe;
-      background: rgba(30, 41, 59, .88);
-      border: 1px solid rgba(125, 211, 252, .28);
+      background: rgba(30,41,59,.88);
+      border: 1px solid rgba(125,211,252,.28);
       box-shadow: none;
     }
     .level-grid {
@@ -115,8 +102,8 @@
     .level-box {
       padding: 14px;
       border-radius: 18px;
-      background: rgba(14, 165, 233, .09);
-      border: 1px solid rgba(125, 211, 252, .2);
+      background: rgba(14,165,233,.09);
+      border: 1px solid rgba(125,211,252,.2);
     }
     .level-box b { color: #fef08a; }
     .options { display: grid; gap: 10px; margin-top: 16px; }
@@ -124,19 +111,19 @@
       width: 100%;
       text-align: left;
       color: #eff6ff;
-      background: rgba(15, 23, 42, .86);
-      border: 1px solid rgba(125, 211, 252, .25);
+      background: rgba(15,23,42,.86);
+      border: 1px solid rgba(125,211,252,.25);
       box-shadow: none;
       font-weight: 700;
     }
-    .option-btn.correct { background: rgba(22, 163, 74, .45); border-color: #86efac; }
-    .option-btn.wrong { background: rgba(220, 38, 38, .42); border-color: #fca5a5; }
+    .option-btn.correct { background: rgba(22,163,74,.45); border-color: #86efac; }
+    .option-btn.wrong { background: rgba(220,38,38,.42); border-color: #fca5a5; }
     .feedback {
       margin-top: 16px;
       border-radius: 18px;
       padding: 14px 16px;
-      background: rgba(2, 6, 23, .48);
-      border: 1px solid rgba(148, 163, 184, .2);
+      background: rgba(2,6,23,.48);
+      border: 1px solid rgba(148,163,184,.2);
       display: none;
     }
     .feedback.show { display: block; }
@@ -151,7 +138,6 @@
       font-weight: 700;
     }
     .hidden { display: none !important; }
-
     @media (max-width: 900px) {
       .level-grid { grid-template-columns: 1fr; }
       .hud { width: 94vw; }
@@ -164,8 +150,8 @@
   <div id="app">
     <canvas id="game"></canvas>
     <div class="hud">
-      <div class="pill">玩家：<strong id="hudName">尚未開始</strong></div>
-      <div class="pill">關卡：<strong id="hudLevel">1</strong></div>
+      <div class="pill">玩家：<strong>健康小勇者</strong></div>
+      <div class="pill">關卡：<strong id="hudLevel">1（簡易）</strong></div>
       <div class="pill">知識膠囊：<strong id="hudPower">0 / 1</strong></div>
       <div class="pill">分數：<strong id="hudScore">0</strong></div>
     </div>
@@ -173,36 +159,14 @@
     <section id="startOverlay" class="overlay">
       <div class="card">
         <h1>健康知識迷宮挑戰</h1>
-        <p>控制「健康小勇者」在黑底藍線迷宮裡收集健康星星與知識膠囊。吃到知識膠囊時，必須回答健康知識選擇題；答對才能累積通關進度，答錯知識膠囊會移動到新位置。碰到病菌怪則挑戰失敗。</p>
+        <p>控制「健康小勇者」從迷宮入口出發，收集健康星星與知識膠囊。吃到知識膠囊時，必須回答健康知識選擇題；答對才能累積通關進度，答錯知識膠囊會移動到新位置。碰到病菌怪則挑戰失敗。</p>
         <div class="level-grid">
           <div class="level-box"><b>第一關：簡易</b><br>答對 1 題即可通關，有 2 個病菌怪，速度較慢。</div>
           <div class="level-box"><b>第二關：中等</b><br>答對 3 題才能通關，有 3 個病菌怪，速度提升。</div>
           <div class="level-box"><b>第三關：困難</b><br>答對 5 題完成挑戰，有 4 個病菌怪，速度最快。</div>
         </div>
-        <p class="muted">電腦版操作方式：使用鍵盤 <span class="kbd">↑</span><span class="kbd">↓</span><span class="kbd">←</span><span class="kbd">→</span> 控制健康小勇者。初始分數為 0，收集健康星星或答對題目後才會加分；同一次挑戰中不會重複出題。</p>
-        <div class="row">
-          <input id="nickname" placeholder="請輸入暱稱" maxlength="12" />
-          <button id="showRulesBtn">查看規則</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="rulesOverlay" class="overlay hidden">
-      <div class="card">
-        <h2>遊戲規則</h2>
-        <ol>
-          <li>收集健康星星可以加分，但通關重點是答對知識膠囊題目。</li>
-          <li>吃到知識膠囊後會跳出四選一題目，遊戲會暫停。</li>
-          <li>不論答對或答錯，都會顯示健康知識補充。</li>
-          <li>同一次挑戰中，健康知識題目不會重複出現。</li>
-          <li>答對：累積知識膠囊進度；答錯：知識膠囊會換位置，需要再去尋找。</li>
-          <li>碰到病菌怪立刻遊戲結束，需要重新挑戰。</li>
-          <li>第一關 2 個病菌怪，第二關 3 個，第三關 4 個；速度會逐關增加。</li>
-        </ol>
-        <div class="row">
-          <button id="startGameBtn">開始遊戲</button>
-          <button class="secondary" id="backStartBtn">返回</button>
-        </div>
+        <p class="muted">電腦版操作方式：使用鍵盤 <span class="kbd">↑</span><span class="kbd">↓</span><span class="kbd">←</span><span class="kbd">→</span> 控制方向。初始分數為 0，收集健康星星或答對題目後才會加分；同一次挑戰中不會重複出題。</p>
+        <div class="row"><button id="startGameBtn">開始遊戲</button></div>
       </div>
     </section>
 
@@ -212,9 +176,7 @@
         <h2 id="questionText">題目</h2>
         <div id="options" class="options"></div>
         <div id="feedback" class="feedback"></div>
-        <div class="row" style="margin-top: 14px;">
-          <button id="continueBtn" class="hidden">繼續遊戲</button>
-        </div>
+        <div class="row" style="margin-top: 14px;"><button id="continueBtn" class="hidden">繼續遊戲</button></div>
       </div>
     </section>
 
@@ -222,9 +184,7 @@
       <div class="card">
         <h1 id="resultTitle">挑戰結果</h1>
         <p id="resultText"></p>
-        <div class="row">
-          <button id="restartBtn">重新挑戰</button>
-        </div>
+        <div class="row"><button id="restartBtn">重新挑戰</button></div>
       </div>
     </section>
   </div>
@@ -259,15 +219,12 @@
 
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
-    const hudName = document.getElementById("hudName");
     const hudLevel = document.getElementById("hudLevel");
     const hudPower = document.getElementById("hudPower");
     const hudScore = document.getElementById("hudScore");
     const startOverlay = document.getElementById("startOverlay");
-    const rulesOverlay = document.getElementById("rulesOverlay");
     const questionOverlay = document.getElementById("questionOverlay");
     const resultOverlay = document.getElementById("resultOverlay");
-    const nicknameInput = document.getElementById("nickname");
     const questionText = document.getElementById("questionText");
     const questionMeta = document.getElementById("questionMeta");
     const optionsEl = document.getElementById("options");
@@ -304,8 +261,14 @@
       { need: 5, ghostCount: 4, ghostSpeed: 2.15, label: "困難" }
     ];
 
-    let state = {
-      playerName: "玩家",
+    const ghostStarts = [
+      { x: 9.5, y: 9.5 },
+      { x: 11.5, y: 9.5 },
+      { x: 9.5, y: 11.5 },
+      { x: 11.5, y: 11.5 }
+    ];
+
+    const state = {
       level: 1,
       score: 0,
       powerGot: 0,
@@ -324,77 +287,43 @@
       lastTime: 0
     };
 
+    function resize() {
+      canvas.width = window.innerWidth * devicePixelRatio;
+      canvas.height = window.innerHeight * devicePixelRatio;
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      const cols = baseMaze[0].length;
+      const rows = baseMaze.length;
+      const availableWidth = Math.min(window.innerWidth * 0.68, 860);
+      const availableHeight = window.innerHeight - 165;
+      state.cell = Math.max(22, Math.min(availableWidth / cols, availableHeight / rows));
+      state.offsetX = (window.innerWidth - cols * state.cell) / 2;
+      state.offsetY = Math.max(105, (window.innerHeight - rows * state.cell) / 2 + 42);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
     function isWall(col, row) {
       if (row < 0 || row >= baseMaze.length || col < 0 || col >= baseMaze[0].length) return true;
       return baseMaze[row][col] === "#";
     }
-
-    function cellCenter(col, row) {
-      return {
-        x: state.offsetX + col * state.cell + state.cell / 2,
-        y: state.offsetY + row * state.cell + state.cell / 2
-      };
+    function entityCell(entity) { return { col: Math.floor(entity.x), row: Math.floor(entity.y) }; }
+    function centerOfCell(col, row) { return { x: col + 0.5, y: row + 0.5 }; }
+    function toPixelX(gridX) { return state.offsetX + gridX * state.cell; }
+    function toPixelY(gridY) { return state.offsetY + gridY * state.cell; }
+    function nearCenter(entity, tolerance = 0.08) {
+      const c = entityCell(entity);
+      return Math.abs(entity.x - (c.col + 0.5)) < tolerance && Math.abs(entity.y - (c.row + 0.5)) < tolerance;
     }
-
-    function toCell(x, y) {
-      return {
-        col: Math.floor((x - state.offsetX) / state.cell),
-        row: Math.floor((y - state.offsetY) / state.cell)
-      };
+    function snapToCenter(entity) {
+      const c = entityCell(entity);
+      entity.x = c.col + 0.5;
+      entity.y = c.row + 0.5;
     }
-
-    function pixelToCell(x, y, offsetX, offsetY, cellSize) {
-      return {
-        col: Math.floor((x - offsetX) / cellSize),
-        row: Math.floor((y - offsetY) / cellSize)
-      };
+    function canMove(entity, dir) {
+      const lookX = entity.x + dir.x * 0.52;
+      const lookY = entity.y + dir.y * 0.52;
+      return !isWall(Math.floor(lookX), Math.floor(lookY));
     }
-
-    function safeCell(cell, fallback) {
-      if (!cell) return fallback;
-      const col = Math.max(1, Math.min(baseMaze[0].length - 2, cell.col));
-      const row = Math.max(1, Math.min(baseMaze.length - 2, cell.row));
-      if (!isWall(col, row)) return { col, row };
-      return fallback;
-    }
-
-    function resize() {
-      const oldCell = state.cell;
-      const oldOffsetX = state.offsetX;
-      const oldOffsetY = state.offsetY;
-      const playerGrid = state.player ? pixelToCell(state.player.x, state.player.y, oldOffsetX, oldOffsetY, oldCell) : null;
-      const ghostGrids = state.ghosts.map(g => pixelToCell(g.x, g.y, oldOffsetX, oldOffsetY, oldCell));
-
-      canvas.width = window.innerWidth * devicePixelRatio;
-      canvas.height = window.innerHeight * devicePixelRatio;
-      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-
-      const cols = baseMaze[0].length;
-      const rows = baseMaze.length;
-      const availableWidth = Math.min(window.innerWidth * 0.72, 920);
-      const availableHeight = window.innerHeight - 145;
-      state.cell = Math.max(22, Math.min(availableWidth / cols, availableHeight / rows));
-      state.offsetX = (window.innerWidth - cols * state.cell) / 2;
-      state.offsetY = Math.max(96, (window.innerHeight - rows * state.cell) / 2 + 36);
-
-      if (state.player && oldCell) {
-        const fixed = safeCell(playerGrid, { col: 1, row: 1 });
-        const p = cellCenter(fixed.col, fixed.row);
-        state.player.x = p.x;
-        state.player.y = p.y;
-      }
-
-      const fallbackCells = [{ col: 17, row: 3 }, { col: 17, row: 9 }, { col: 3, row: 15 }, { col: 9, row: 15 }];
-      state.ghosts.forEach((g, index) => {
-        const fixed = safeCell(ghostGrids[index], fallbackCells[index] || { col: 17, row: 3 });
-        const p = cellCenter(fixed.col, fixed.row);
-        g.x = p.x;
-        g.y = p.y;
-      });
-    }
-
-    window.addEventListener("resize", resize);
-    resize();
 
     function randomOpenCell(minDistanceFromPlayer = 0) {
       const candidates = [];
@@ -402,7 +331,7 @@
         for (let c = 1; c < baseMaze[0].length - 1; c++) {
           if (!isWall(c, r)) {
             if (state.player && minDistanceFromPlayer > 0) {
-              const pc = toCell(state.player.x, state.player.y);
+              const pc = entityCell(state.player);
               const dist = Math.abs(pc.col - c) + Math.abs(pc.row - r);
               if (dist < minDistanceFromPlayer) continue;
             }
@@ -420,7 +349,7 @@
           if (!isWall(c, r)) state.dots.add(`${c},${r}`);
         }
       }
-      ["1,1", "17,3", "17,9", "3,15", "9,15"].forEach(k => state.dots.delete(k));
+      ["1,1", "9,9", "11,9", "9,11", "11,11"].forEach(k => state.dots.delete(k));
     }
 
     function placePowerBalls() {
@@ -428,7 +357,7 @@
       const need = levelSettings[state.level - 1].need;
       const used = new Set();
       while (state.powerBalls.length < need) {
-        const cell = randomOpenCell(6);
+        const cell = randomOpenCell(5);
         const key = `${cell.col},${cell.row}`;
         if (!used.has(key) && key !== "1,1") {
           used.add(key);
@@ -439,88 +368,65 @@
     }
 
     function resetLevel() {
-      const start = cellCenter(1, 1);
-      state.player = {
-        x: start.x,
-        y: start.y,
-        dir: { x: 0, y: 0 },
-        nextDir: { x: 1, y: 0 },
-        speed: 3.65,
-        mouth: 0
-      };
-      buildDots();
+      const start = centerOfCell(1, 1);
+      state.player = { x: start.x, y: start.y, dir: { x: 0, y: 0 }, nextDir: { x: 1, y: 0 }, speed: 3.5, mouth: 0 };
       state.powerGot = 0;
-      placePowerBalls();
       state.ghosts = [];
       const setting = levelSettings[state.level - 1];
-      const starts = [{ col: 17, row: 3 }, { col: 17, row: 9 }, { col: 3, row: 15 }, { col: 9, row: 15 }];
-      const dirs = [{ x: -1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 }, { x: 0, y: -1 }];
+      const dirs = [{ x: -1, y: 0 }, { x: 1, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 }];
       for (let i = 0; i < setting.ghostCount; i++) {
-        const startCell = safeCell(starts[i], { col: 17, row: 3 });
-        const p = cellCenter(startCell.col, startCell.row);
         state.ghosts.push({
-          x: p.x,
-          y: p.y,
+          x: ghostStarts[i].x,
+          y: ghostStarts[i].y,
           dir: dirs[i],
           speed: setting.ghostSpeed,
           colorIndex: i
         });
       }
+      buildDots();
+      placePowerBalls();
       updateHUD();
     }
 
     function updateHUD() {
-      hudName.textContent = state.playerName;
       hudLevel.textContent = `${state.level}（${levelSettings[state.level - 1].label}）`;
       hudPower.textContent = `${state.powerGot} / ${levelSettings[state.level - 1].need}`;
       hudScore.textContent = state.score;
     }
 
-    function canMove(entity, dir) {
-      const nextX = entity.x + dir.x * state.cell * 0.42;
-      const nextY = entity.y + dir.y * state.cell * 0.42;
-      const c = toCell(nextX, nextY);
-      return !isWall(c.col, c.row);
-    }
-
-    function nearCenter(entity, tolerance = 4) {
-      const c = toCell(entity.x, entity.y);
-      const center = cellCenter(c.col, c.row);
-      return Math.abs(entity.x - center.x) < tolerance && Math.abs(entity.y - center.y) < tolerance;
-    }
-
-    function snapToCenter(entity) {
-      const c = toCell(entity.x, entity.y);
-      const center = cellCenter(c.col, c.row);
-      entity.x = center.x;
-      entity.y = center.y;
+    function moveEntity(entity, dt) {
+      if (nearCenter(entity)) {
+        snapToCenter(entity);
+        if (entity.nextDir && canMove(entity, entity.nextDir)) entity.dir = { ...entity.nextDir };
+        if (!canMove(entity, entity.dir)) entity.dir = { x: 0, y: 0 };
+      }
+      const nextX = entity.x + entity.dir.x * entity.speed * dt;
+      const nextY = entity.y + entity.dir.y * entity.speed * dt;
+      if (!isWall(Math.floor(nextX + entity.dir.x * 0.38), Math.floor(nextY + entity.dir.y * 0.38))) {
+        entity.x = nextX;
+        entity.y = nextY;
+      } else {
+        snapToCenter(entity);
+        entity.dir = { x: 0, y: 0 };
+      }
     }
 
     function movePlayer(dt) {
-      const p = state.player;
-      if (nearCenter(p, 5)) {
-        snapToCenter(p);
-        if (canMove(p, p.nextDir)) p.dir = { ...p.nextDir };
-        if (!canMove(p, p.dir)) p.dir = { x: 0, y: 0 };
-      }
-      p.x += p.dir.x * p.speed * dt;
-      p.y += p.dir.y * p.speed * dt;
-      p.mouth += dt * 0.018;
+      moveEntity(state.player, dt);
+      state.player.mouth += dt * 7;
     }
 
     function moveGhosts(dt) {
-      const dirs = [
-        { x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }
-      ];
+      const dirs = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }];
       for (const g of state.ghosts) {
-        if (nearCenter(g, 5)) {
+        if (nearCenter(g)) {
           snapToCenter(g);
           let possible = dirs.filter(d => canMove(g, d));
           const reverse = { x: -g.dir.x, y: -g.dir.y };
           if (possible.length > 1) possible = possible.filter(d => !(d.x === reverse.x && d.y === reverse.y));
-          const pc = toCell(state.player.x, state.player.y);
-          const gc = toCell(g.x, g.y);
-          if (Math.random() < 0.5) {
+          const pc = entityCell(state.player);
+          const gc = entityCell(g);
+          if (Math.random() < 0.48) {
             possible.sort((a, b) => {
               const da = Math.abs(pc.col - (gc.col + a.x)) + Math.abs(pc.row - (gc.row + a.y));
               const db = Math.abs(pc.col - (gc.col + b.x)) + Math.abs(pc.row - (gc.row + b.y));
@@ -531,19 +437,18 @@
             g.dir = possible[Math.floor(Math.random() * possible.length)] || g.dir;
           }
         }
-        g.x += g.dir.x * g.speed * dt;
-        g.y += g.dir.y * g.speed * dt;
+        moveEntity(g, dt);
       }
     }
 
     function checkCollectibles() {
-      const cell = toCell(state.player.x, state.player.y);
-      const key = `${cell.col},${cell.row}`;
+      const c = entityCell(state.player);
+      const key = `${c.col},${c.row}`;
       if (state.dots.has(key)) {
         state.dots.delete(key);
         state.score += 10;
       }
-      const power = state.powerBalls.find(p => p.active && p.col === cell.col && p.row === cell.row);
+      const power = state.powerBalls.find(p => p.active && p.col === c.col && p.row === c.row);
       if (power) {
         power.active = false;
         openQuestion(power);
@@ -554,8 +459,7 @@
     function checkGhostCollision() {
       if (!state.running || state.paused) return;
       for (const g of state.ghosts) {
-        const d = Math.hypot(state.player.x - g.x, state.player.y - g.y);
-        if (d < state.cell * 0.48) {
+        if (Math.hypot(state.player.x - g.x, state.player.y - g.y) < 0.58) {
           endGame(false);
           return;
         }
@@ -563,18 +467,15 @@
     }
 
     function pickQuestion() {
-      const allowedIndices = questionBank
-        .map((q, index) => ({ q, index }))
-        .filter(item => item.q.level <= state.level)
-        .map(item => item.index);
-      let availableIndices = allowedIndices.filter(index => !state.usedQuestions.has(index));
-      if (availableIndices.length === 0) {
-        allowedIndices.forEach(index => state.usedQuestions.delete(index));
-        availableIndices = [...allowedIndices];
+      const allowed = questionBank.map((q, index) => ({ q, index })).filter(item => item.q.level <= state.level).map(item => item.index);
+      let available = allowed.filter(index => !state.usedQuestions.has(index));
+      if (available.length === 0) {
+        allowed.forEach(index => state.usedQuestions.delete(index));
+        available = [...allowed];
       }
-      const pickedIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
-      state.usedQuestions.add(pickedIndex);
-      return questionBank[pickedIndex];
+      const picked = available[Math.floor(Math.random() * available.length)];
+      state.usedQuestions.add(picked);
+      return questionBank[picked];
     }
 
     function openQuestion(powerBall) {
@@ -622,7 +523,7 @@
       let cell;
       let key;
       do {
-        cell = randomOpenCell(7);
+        cell = randomOpenCell(5);
         key = `${cell.col},${cell.row}`;
       } while (state.powerBalls.some(p => p.active && p.col === cell.col && p.row === cell.row));
       powerBall.col = cell.col;
@@ -637,16 +538,13 @@
       if (!state.lastAnswerCorrect) relocatePowerBall(powerBall);
       state.currentQuestion = null;
       if (state.powerGot >= levelSettings[state.level - 1].need) {
-        if (state.level >= 3) {
-          endGame(true);
-        } else {
+        if (state.level >= 3) endGame(true);
+        else {
           state.level += 1;
           resetLevel();
           state.paused = false;
         }
-      } else {
-        state.paused = false;
-      }
+      } else state.paused = false;
     });
 
     function endGame(success) {
@@ -654,209 +552,9 @@
       state.paused = true;
       resultTitle.textContent = success ? "挑戰成功！" : "挑戰失敗！";
       resultText.innerHTML = success
-        ? `${state.playerName} 完成三關健康知識挑戰，總分 <b>${state.score}</b> 分。你不只避開病菌怪，也收集了健康知識！`
-        : `${state.playerName} 碰到病菌怪了，遊戲結束。可以重新挑戰，熟悉題目和迷宮後再試一次。`;
+        ? `你完成三關健康知識挑戰，總分 <b>${state.score}</b> 分。你不只避開病菌怪，也收集了健康知識！`
+        : `碰到病菌怪了，遊戲結束。可以重新挑戰，熟悉題目和迷宮後再試一次。`;
       resultOverlay.classList.remove("hidden");
-    }
-
-    function drawMaze() {
-      const rows = baseMaze.length;
-      const cols = baseMaze[0].length;
-      ctx.save();
-      ctx.translate(state.offsetX, state.offsetY);
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          if (baseMaze[r][c] === "#") {
-            const x = c * state.cell;
-            const y = r * state.cell;
-            const grad = ctx.createLinearGradient(x, y, x + state.cell, y + state.cell);
-            grad.addColorStop(0, "#1d4ed8");
-            grad.addColorStop(1, "#0284c7");
-            ctx.fillStyle = grad;
-            roundRect(ctx, x + 2, y + 2, state.cell - 4, state.cell - 4, 8);
-            ctx.fill();
-            ctx.strokeStyle = "rgba(125, 211, 252, .38)";
-            ctx.stroke();
-          }
-        }
-      }
-      ctx.restore();
-    }
-
-    function drawDots() {
-      ctx.fillStyle = "rgba(250, 250, 210, .92)";
-      for (const key of state.dots) {
-        const [c, r] = key.split(",").map(Number);
-        const p = cellCenter(c, r);
-        const outer = Math.max(4, state.cell * .13);
-        const inner = outer * .45;
-        ctx.beginPath();
-        for (let i = 0; i < 10; i++) {
-          const angle = -Math.PI / 2 + i * Math.PI / 5;
-          const radius = i % 2 === 0 ? outer : inner;
-          const x = p.x + Math.cos(angle) * radius;
-          const y = p.y + Math.sin(angle) * radius;
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-        ctx.fill();
-      }
-    }
-
-    function drawPowerBalls(time) {
-      for (const p of state.powerBalls) {
-        if (!p.active) continue;
-        const center = cellCenter(p.col, p.row);
-        const radius = state.cell * (0.25 + Math.sin(time / 180 + p.pulse) * 0.035);
-        const glow = ctx.createRadialGradient(center.x, center.y, 2, center.x, center.y, radius * 2.1);
-        glow.addColorStop(0, "rgba(255,255,255,.95)");
-        glow.addColorStop(.45, "rgba(34,211,238,.75)");
-        glow.addColorStop(1, "rgba(34,211,238,0)");
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, radius * 2.1, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.save();
-        ctx.translate(center.x, center.y);
-        ctx.rotate(Math.sin(time / 420 + p.pulse) * 0.22);
-        ctx.fillStyle = "#22d3ee";
-        roundRect(ctx, -radius * 1.45, -radius * .62, radius * 2.9, radius * 1.24, radius * .62);
-        ctx.fill();
-        ctx.fillStyle = "#f8fafc";
-        roundRect(ctx, -radius * 1.45, -radius * .62, radius * 1.45, radius * 1.24, radius * .62);
-        ctx.fill();
-        ctx.strokeStyle = "rgba(15, 23, 42, .45)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, -radius * .58);
-        ctx.lineTo(0, radius * .58);
-        ctx.stroke();
-        ctx.restore();
-      }
-    }
-
-    function drawPlayer() {
-      const p = state.player;
-      const r = state.cell * .38;
-      const bob = Math.sin(p.mouth * 1.6) * 2;
-      ctx.save();
-      ctx.translate(p.x, p.y + bob);
-      ctx.fillStyle = "#34d399";
-      ctx.beginPath();
-      ctx.arc(0, 0, r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#dcfce7";
-      ctx.beginPath();
-      ctx.arc(0, r * .1, r * .58, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#0f172a";
-      ctx.beginPath();
-      ctx.arc(-r * .23, -r * .08, r * .08, 0, Math.PI * 2);
-      ctx.arc(r * .23, -r * .08, r * .08, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = "#0f172a";
-      ctx.lineWidth = Math.max(2, state.cell * .04);
-      ctx.beginPath();
-      ctx.arc(0, r * .08, r * .22, 0.15, Math.PI - 0.15);
-      ctx.stroke();
-      ctx.fillStyle = "#f8fafc";
-      roundRect(ctx, -r * .45, -r * 1.05, r * .9, r * .36, r * .12);
-      ctx.fill();
-      ctx.fillStyle = "#ef4444";
-      ctx.fillRect(-r * .07, -r * .99, r * .14, r * .24);
-      ctx.fillRect(-r * .18, -r * .9, r * .36, r * .08);
-      if (p.dir.x !== 0 || p.dir.y !== 0) {
-        ctx.fillStyle = "rgba(15, 23, 42, .28)";
-        ctx.beginPath();
-        ctx.arc(p.dir.x * r * .85, p.dir.y * r * .85, r * .14, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-    }
-
-    function drawGhosts(time) {
-      const colors = ["#fb7185", "#a78bfa", "#f97316", "#22c55e"];
-      for (const g of state.ghosts) {
-        const r = state.cell * .34;
-        const type = g.colorIndex % 4;
-        const color = colors[type];
-        ctx.save();
-        ctx.translate(g.x, g.y);
-        ctx.rotate(Math.sin(time / 520 + g.colorIndex) * .1);
-
-        if (type === 0) {
-          ctx.strokeStyle = color;
-          ctx.lineWidth = Math.max(2, state.cell * .045);
-          for (let i = 0; i < 10; i++) {
-            const angle = i * Math.PI * 2 / 10;
-            const x1 = Math.cos(angle) * r * .82;
-            const y1 = Math.sin(angle) * r * .82;
-            const x2 = Math.cos(angle) * r * 1.22;
-            const y2 = Math.sin(angle) * r * 1.22;
-            ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-            ctx.beginPath(); ctx.arc(x2, y2, r * .1, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
-          }
-          ctx.fillStyle = color;
-          ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
-        } else if (type === 1) {
-          ctx.fillStyle = color;
-          roundRect(ctx, -r * 1.25, -r * .62, r * 2.5, r * 1.24, r * .62);
-          ctx.fill();
-          ctx.strokeStyle = "rgba(255,255,255,.45)";
-          ctx.lineWidth = 2;
-          for (let i = -1; i <= 1; i++) {
-            ctx.beginPath(); ctx.moveTo(i * r * .45, -r * .5); ctx.lineTo(i * r * .2, r * .5); ctx.stroke();
-          }
-        } else if (type === 2) {
-          ctx.fillStyle = color;
-          roundRect(ctx, -r * 1.05, -r * .58, r * 2.1, r * 1.16, r * .58);
-          ctx.fill();
-          ctx.fillStyle = "#f8fafc";
-          roundRect(ctx, -r * 1.05, -r * .58, r * 1.05, r * 1.16, r * .58);
-          ctx.fill();
-          ctx.strokeStyle = "rgba(15,23,42,.55)";
-          ctx.lineWidth = 2;
-          ctx.beginPath(); ctx.moveTo(0, -r * .55); ctx.lineTo(0, r * .55); ctx.stroke();
-        } else {
-          ctx.fillStyle = color;
-          ctx.beginPath();
-          ctx.moveTo(-r, -r * .15);
-          ctx.bezierCurveTo(-r * .85, -r * .95, r * .1, -r * 1.08, r * .78, -r * .48);
-          ctx.bezierCurveTo(r * 1.18, -r * .1, r * .9, r * .84, r * .08, r * .96);
-          ctx.bezierCurveTo(-r * .72, r * 1.06, -r * 1.18, r * .48, -r, -r * .15);
-          ctx.fill();
-          ctx.fillStyle = "rgba(255,255,255,.38)";
-          ctx.beginPath(); ctx.arc(-r * .38, -r * .28, r * .18, 0, Math.PI * 2); ctx.arc(r * .34, r * .26, r * .14, 0, Math.PI * 2); ctx.arc(r * .08, -r * .48, r * .1, 0, Math.PI * 2); ctx.fill();
-        }
-
-        ctx.fillStyle = "rgba(255,255,255,.92)";
-        ctx.beginPath();
-        ctx.arc(-r * .28, -r * .12, r * .17, 0, Math.PI * 2);
-        ctx.arc(r * .28, -r * .12, r * .17, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#0f172a";
-        ctx.beginPath();
-        ctx.arc(-r * .23 + g.dir.x * 2, -r * .1 + g.dir.y * 2, r * .065, 0, Math.PI * 2);
-        ctx.arc(r * .33 + g.dir.x * 2, -r * .1 + g.dir.y * 2, r * .065, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = "#0f172a";
-        ctx.lineWidth = Math.max(2, state.cell * .035);
-        ctx.beginPath(); ctx.arc(0, r * .2, r * .22, Math.PI + .2, Math.PI * 2 - .2); ctx.stroke();
-        ctx.restore();
-      }
-    }
-
-    function drawBackground(time) {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      for (let i = 0; i < 28; i++) {
-        const x = (i * 97 + time * 0.012) % window.innerWidth;
-        const y = (i * 53 + Math.sin(time / 900 + i) * 18 + 80) % window.innerHeight;
-        ctx.strokeStyle = "rgba(125, 211, 252, .16)";
-        ctx.beginPath();
-        ctx.arc(x, y, 3 + (i % 4), 0, Math.PI * 2);
-        ctx.stroke();
-      }
     }
 
     function roundRect(ctx, x, y, w, h, r) {
@@ -869,8 +567,169 @@
       ctx.closePath();
     }
 
+    function drawBackground(time) {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      for (let i = 0; i < 28; i++) {
+        const x = (i * 97 + time * 0.012) % window.innerWidth;
+        const y = (i * 53 + Math.sin(time / 900 + i) * 18 + 80) % window.innerHeight;
+        ctx.strokeStyle = "rgba(125,211,252,.16)";
+        ctx.beginPath();
+        ctx.arc(x, y, 3 + (i % 4), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    function drawMaze() {
+      ctx.save();
+      ctx.translate(state.offsetX, state.offsetY);
+      for (let r = 0; r < baseMaze.length; r++) {
+        for (let c = 0; c < baseMaze[0].length; c++) {
+          if (baseMaze[r][c] === "#") {
+            const x = c * state.cell;
+            const y = r * state.cell;
+            const grad = ctx.createLinearGradient(x, y, x + state.cell, y + state.cell);
+            grad.addColorStop(0, "#1d4ed8");
+            grad.addColorStop(1, "#0284c7");
+            ctx.fillStyle = grad;
+            roundRect(ctx, x + 2, y + 2, state.cell - 4, state.cell - 4, 8);
+            ctx.fill();
+            ctx.strokeStyle = "rgba(125,211,252,.38)";
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawDots() {
+      ctx.fillStyle = "rgba(250,250,210,.92)";
+      for (const key of state.dots) {
+        const [c, r] = key.split(",").map(Number);
+        const px = toPixelX(c + 0.5);
+        const py = toPixelY(r + 0.5);
+        const outer = Math.max(4, state.cell * .13);
+        const inner = outer * .45;
+        ctx.beginPath();
+        for (let i = 0; i < 10; i++) {
+          const angle = -Math.PI / 2 + i * Math.PI / 5;
+          const radius = i % 2 === 0 ? outer : inner;
+          const x = px + Math.cos(angle) * radius;
+          const y = py + Math.sin(angle) * radius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    function drawPowerBalls(time) {
+      for (const p of state.powerBalls) {
+        if (!p.active) continue;
+        const x = toPixelX(p.col + 0.5);
+        const y = toPixelY(p.row + 0.5);
+        const radius = state.cell * (0.25 + Math.sin(time / 180 + p.pulse) * 0.035);
+        const glow = ctx.createRadialGradient(x, y, 2, x, y, radius * 2.1);
+        glow.addColorStop(0, "rgba(255,255,255,.95)");
+        glow.addColorStop(.45, "rgba(34,211,238,.75)");
+        glow.addColorStop(1, "rgba(34,211,238,0)");
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(x, y, radius * 2.1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(Math.sin(time / 420 + p.pulse) * 0.22);
+        ctx.fillStyle = "#22d3ee";
+        roundRect(ctx, -radius * 1.45, -radius * .62, radius * 2.9, radius * 1.24, radius * .62);
+        ctx.fill();
+        ctx.fillStyle = "#f8fafc";
+        roundRect(ctx, -radius * 1.45, -radius * .62, radius * 1.45, radius * 1.24, radius * .62);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(15,23,42,.45)";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, -radius * .58); ctx.lineTo(0, radius * .58); ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    function drawPlayer() {
+      const p = state.player;
+      const x = toPixelX(p.x);
+      const y = toPixelY(p.y);
+      const r = state.cell * .38;
+      const bob = Math.sin(p.mouth * 1.6) * 2;
+      ctx.save();
+      ctx.translate(x, y + bob);
+      ctx.fillStyle = "#34d399";
+      ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#dcfce7";
+      ctx.beginPath(); ctx.arc(0, r * .1, r * .58, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#0f172a";
+      ctx.beginPath(); ctx.arc(-r * .23, -r * .08, r * .08, 0, Math.PI * 2); ctx.arc(r * .23, -r * .08, r * .08, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#0f172a";
+      ctx.lineWidth = Math.max(2, state.cell * .04);
+      ctx.beginPath(); ctx.arc(0, r * .08, r * .22, 0.15, Math.PI - 0.15); ctx.stroke();
+      ctx.fillStyle = "#f8fafc";
+      roundRect(ctx, -r * .45, -r * 1.05, r * .9, r * .36, r * .12); ctx.fill();
+      ctx.fillStyle = "#ef4444";
+      ctx.fillRect(-r * .07, -r * .99, r * .14, r * .24);
+      ctx.fillRect(-r * .18, -r * .9, r * .36, r * .08);
+      ctx.restore();
+    }
+
+    function drawGhosts(time) {
+      const colors = ["#fb7185", "#a78bfa", "#f97316", "#22c55e"];
+      for (const g of state.ghosts) {
+        const x = toPixelX(g.x);
+        const y = toPixelY(g.y);
+        const r = state.cell * .34;
+        const type = g.colorIndex % 4;
+        const color = colors[type];
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(Math.sin(time / 520 + g.colorIndex) * .1);
+        if (type === 0) {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = Math.max(2, state.cell * .045);
+          for (let i = 0; i < 10; i++) {
+            const a = i * Math.PI * 2 / 10;
+            const x1 = Math.cos(a) * r * .82, y1 = Math.sin(a) * r * .82;
+            const x2 = Math.cos(a) * r * 1.22, y2 = Math.sin(a) * r * 1.22;
+            ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+            ctx.beginPath(); ctx.arc(x2, y2, r * .1, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
+          }
+          ctx.fillStyle = color; ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+        } else if (type === 1) {
+          ctx.fillStyle = color; roundRect(ctx, -r * 1.25, -r * .62, r * 2.5, r * 1.24, r * .62); ctx.fill();
+          ctx.strokeStyle = "rgba(255,255,255,.45)"; ctx.lineWidth = 2;
+          for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(i * r * .45, -r * .5); ctx.lineTo(i * r * .2, r * .5); ctx.stroke(); }
+        } else if (type === 2) {
+          ctx.fillStyle = color; roundRect(ctx, -r * 1.05, -r * .58, r * 2.1, r * 1.16, r * .58); ctx.fill();
+          ctx.fillStyle = "#f8fafc"; roundRect(ctx, -r * 1.05, -r * .58, r * 1.05, r * 1.16, r * .58); ctx.fill();
+          ctx.strokeStyle = "rgba(15,23,42,.55)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, -r * .55); ctx.lineTo(0, r * .55); ctx.stroke();
+        } else {
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(-r, -r * .15);
+          ctx.bezierCurveTo(-r * .85, -r * .95, r * .1, -r * 1.08, r * .78, -r * .48);
+          ctx.bezierCurveTo(r * 1.18, -r * .1, r * .9, r * .84, r * .08, r * .96);
+          ctx.bezierCurveTo(-r * .72, r * 1.06, -r * 1.18, r * .48, -r, -r * .15);
+          ctx.fill();
+          ctx.fillStyle = "rgba(255,255,255,.38)";
+          ctx.beginPath(); ctx.arc(-r * .38, -r * .28, r * .18, 0, Math.PI * 2); ctx.arc(r * .34, r * .26, r * .14, 0, Math.PI * 2); ctx.arc(r * .08, -r * .48, r * .1, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.fillStyle = "rgba(255,255,255,.92)";
+        ctx.beginPath(); ctx.arc(-r * .28, -r * .12, r * .17, 0, Math.PI * 2); ctx.arc(r * .28, -r * .12, r * .17, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#0f172a";
+        ctx.beginPath(); ctx.arc(-r * .23 + g.dir.x * 2, -r * .1 + g.dir.y * 2, r * .065, 0, Math.PI * 2); ctx.arc(r * .33 + g.dir.x * 2, -r * .1 + g.dir.y * 2, r * .065, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#0f172a"; ctx.lineWidth = Math.max(2, state.cell * .035); ctx.beginPath(); ctx.arc(0, r * .2, r * .22, Math.PI + .2, Math.PI * 2 - .2); ctx.stroke();
+        ctx.restore();
+      }
+    }
+
     function loop(time) {
-      const dt = Math.min(22, time - state.lastTime || 16);
+      const dt = Math.min(0.033, (time - state.lastTime || 16) / 1000);
       state.lastTime = time;
       drawBackground(time);
       drawMaze();
@@ -890,12 +749,7 @@
 
     function setDirection(dir) {
       if (!state.player) return;
-      const map = {
-        up: { x: 0, y: -1 },
-        down: { x: 0, y: 1 },
-        left: { x: -1, y: 0 },
-        right: { x: 1, y: 0 }
-      };
+      const map = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };
       state.player.nextDir = map[dir] || state.player.nextDir;
     }
 
@@ -907,18 +761,6 @@
       if (e.key === "ArrowRight") setDirection("right");
     });
 
-    document.getElementById("showRulesBtn").addEventListener("click", () => {
-      state.playerName = nicknameInput.value.trim() || "健康小勇者";
-      hudName.textContent = state.playerName;
-      startOverlay.classList.add("hidden");
-      rulesOverlay.classList.remove("hidden");
-    });
-
-    document.getElementById("backStartBtn").addEventListener("click", () => {
-      rulesOverlay.classList.add("hidden");
-      startOverlay.classList.remove("hidden");
-    });
-
     document.getElementById("startGameBtn").addEventListener("click", () => {
       state.level = 1;
       state.score = 0;
@@ -926,9 +768,9 @@
       state.usedQuestions.clear();
       state.running = true;
       state.paused = false;
-      hudScore.textContent = "0";
+      resize();
       resetLevel();
-      rulesOverlay.classList.add("hidden");
+      startOverlay.classList.add("hidden");
     });
 
     document.getElementById("restartBtn").addEventListener("click", () => {
@@ -940,7 +782,7 @@
       state.score = 0;
       state.powerGot = 0;
       state.usedQuestions.clear();
-      hudScore.textContent = "0";
+      resize();
       resetLevel();
     });
 
@@ -948,4 +790,3 @@
   </script>
 </body>
 </html>
-
